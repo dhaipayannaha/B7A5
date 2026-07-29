@@ -1,0 +1,65 @@
+"use server";
+
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken"
+import { redirect } from "next/navigation";
+
+export type LoginState = {
+    success: boolean;
+    statusCode: number;
+    message: string;
+    data?: {
+        accessToken: string;
+        refreshToken: string
+    };
+}
+
+export const loginAction = async (redirectTo: string, prevState: LoginState | null, formData: FormData): Promise<LoginState | null> => {
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    const payload = {
+        email,
+        password
+    }
+
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    const result = await res.json();
+    if (result.success && result.data) {
+        const cookieStore = await cookies();
+        const { accessToken, refreshToken } = result.data;
+
+        cookieStore.set("accessToken", accessToken, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24,
+            sameSite: "lax"
+        });
+
+        cookieStore.set("refreshToken", result.data.refreshToken, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7,
+            sameSite: "lax"
+        });
+
+        const decodedToken = jwt.decode(result.data.accessToken) as jwt.JwtPayload;
+
+        if (redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
+            redirect(redirectTo);
+        } else if (decodedToken.role === "CUSTOMER") {
+            redirect("/dashboard");
+        } else if (decodedToken.role === "ADMIN") {
+            redirect("/admin-dashboard");
+        } else if (decodedToken.role === "PROVIDER") {
+            redirect("/provider-dashboard");
+        }
+    }
+
+    return result;
+}
+
