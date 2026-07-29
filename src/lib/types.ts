@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import { LucideProps } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 type EquipmentCondition = "GOOD" | "NEW" | "FAIR" | "POOR"; // adjust based on your actual enum values
 type EquipmentStatus = "AVAILABLE" | "UNAVAILABLE" | "RENTED" | "MAINTENANCE"; // adjust based on your actual enum values
@@ -47,4 +49,43 @@ export interface Equipment {
     updatedAt: string;
     provider: Provider;
     category: Category;
+}
+
+
+
+
+
+export type ISidebarItem = {
+    label: string,
+    href: string,
+    icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
+}
+type IUser = {
+    success: boolean,
+    message: string,
+    data: {
+        profile: {
+            id: string,
+            name: string,
+            email: string,
+            activeStatus: string,
+            role: string,
+            createdAt: string,
+            updatedAt: string,
+            profile: {
+                id: string,
+                profilePhoto: string,
+                bio: string | null,
+                userId: string,
+                createdAt: string,
+                updatedAt: string
+            }
+        }
+    }
+}
+
+
+
+export type NavbarProps = {
+    user: IUser
 }

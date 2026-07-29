@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquareIcon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Equipment } from "@/lib/types";
 
 type NewsCardProps = {
@@ -11,7 +12,8 @@ type NewsCardProps = {
 export function GearCard({ post }: NewsCardProps) {
 
     return (
-        <Card className="gap-4">
+        <Link href={`/gear/${post.id}`} className="block h-full">
+            <Card className="gap-4 h-full hover:shadow-lg transition-shadow cursor-pointer">
             {post.images[0] && (
 
                 <Image
@@ -55,5 +57,6 @@ export function GearCard({ post }: NewsCardProps) {
                 </div>
             </CardContent>
         </Card>
+        </Link>
     );
 }
