@@ -17,44 +17,44 @@ export const sidebarMenuItems: Record<string, ISidebarItem[]> = {
     PROVIDER: [
         {
             label: "Dashboard",
-            href: "/author-dashboard",
+            href: "/dashboard/provider",
             icon: LayoutDashboard,
         },
         {
-            label: "My Posts",
-            href: "/author-dashboard/my-posts",
+            label: "My Gear",
+            href: "/dashboard/provider/gear",
             icon: FileText,
         },
         {
             label: "My Profile",
-            href: "/author-dashboard/my-profile",
+            href: "/dashboard/provider/my-profile",
             icon: User,
         },
     ],
     ADMIN: [
         {
             label: "Dashboard",
-            href: "/admin-dashboard",
+            href: "/dashboard/admin",
             icon: LayoutDashboard,
         },
         {
             label: "Manage Users",
-            href: "/admin-dashboard/users",
+            href: "/dashboard/admin/users",
             icon: Users,
         },
         {
             label: "All Posts",
-            href: "/admin-dashboard/posts",
+            href: "/dashboard/admin/posts",
             icon: FileText,
         },
         {
             label: "All Users",
-            href: "/admin-dashboard/users",
+            href: "/dashboard/admin/users",
             icon: Users,
         },
         {
             label: "All Rented",
-            href: "/admin-dashboard/rented",
+            href: "/dashboard/admin/rented",
             icon: Users,
         },
     ],
