@@ -1,0 +1,54 @@
+"use client"
+
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRef, useState, useEffect } from "react";
+
+export function GearSearchBar() {
+    const pathName = usePathname();
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    const [searchValue, setSearchValue] = useState(searchParams?.get("searchTerm")?.toString() || "");
+    const debouncedReference = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        setSearchValue(searchParams?.get("searchTerm")?.toString() || "");
+    }, [searchParams]);
+
+    const handleChange = (value: string) => {
+        setSearchValue(value);
+
+        if (debouncedReference.current) {
+            clearTimeout(debouncedReference.current)
+        }
+
+        debouncedReference.current = setTimeout(() => {
+            console.log(value);
+
+            let params = new URLSearchParams(searchParams?.toString() || "");
+            if (value) {
+                params.set("searchTerm", value);
+            } else {
+                params.delete("searchTerm")
+            }
+
+            router.replace(`${pathName}?${params.toString()}`)
+        }, 500)
+    }
+
+
+
+    return (
+        <div className="relative w-full max-w-sm">
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                value={searchValue}
+                onChange={(e) => handleChange(e.target.value)}
+                placeholder="Search gear by title..."
+                className="pl-9"
+            />
+        </div>
+    )
+}

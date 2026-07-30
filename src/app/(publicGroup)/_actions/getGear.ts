@@ -7,8 +7,12 @@ export const getGear = async ({ query }: { query?: { [key: string]: string | str
     // const searchTerm = `${search?.searchTerm ? `?searchTerm=${search.searchTerm}` : ''}`
 
     const params = new URLSearchParams()
-    if (query && query.searchTerm) {
-        params.set("searchTerm", query.searchTerm as string)
+    if (query) {
+        Object.entries(query).forEach(([key, value]) => {
+            if (value) {
+                params.set(key, value.toString());
+            }
+        });
     }
 
     const cookieStore = await cookies();

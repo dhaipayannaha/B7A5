@@ -62,12 +62,12 @@ export async function proxy(request: NextRequest) {
 
 
     if (decodedAccessToken?.success && AUTH_ROUTES.includes(pathname)) {
-        if (userRole === "USER") {
-            return NextResponse.redirect(new URL('/dashboard', request.url));
+        if (userRole === "CUSTOMER") {
+            return NextResponse.redirect(new URL('/dashboard/customer', request.url));
         } else if (userRole === "ADMIN") {
-            return NextResponse.redirect(new URL('/admin-dashboard', request.url));
-        } else if (userRole === "AUTHOR") {
-            return NextResponse.redirect(new URL('/author-dashboard', request.url));
+            return NextResponse.redirect(new URL('/dashboard/admin', request.url));
+        } else if (userRole === "PROVIDER") {
+            return NextResponse.redirect(new URL('/dashboard/provider', request.url));
         } else {
             return NextResponse.redirect(new URL('/', request.url));
         }
@@ -76,12 +76,13 @@ export async function proxy(request: NextRequest) {
 
 
 
-    if (pathname.startsWith("/dashboard") && userRole !== "USER") {
-        return NextResponse.redirect(new URL('/not-found', request.url));
-    } else if (pathname.startsWith("/admin-dashboard") && userRole !== "ADMIN") {
-        return NextResponse.redirect(new URL('/not-found', request.url));
-    } else if (pathname.startsWith("/author-dashboard") && userRole !== "AUTHOR") {
-        return NextResponse.redirect(new URL('/not-found', request.url));
+    // Check most specific paths first to avoid /dashboard catching /dashboard/admin etc.
+    if (pathname.startsWith("/dashboard/admin")) {
+        if (userRole !== "ADMIN") return NextResponse.redirect(new URL('/not-found', request.url));
+    } else if (pathname.startsWith("/dashboard/provider")) {
+        if (userRole !== "PROVIDER") return NextResponse.redirect(new URL('/not-found', request.url));
+    } else if (pathname.startsWith("/dashboard/customer")) {
+        if (userRole !== "CUSTOMER") return NextResponse.redirect(new URL('/not-found', request.url));
     }
 
     return NextResponse.next();

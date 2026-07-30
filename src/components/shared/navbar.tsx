@@ -70,7 +70,7 @@ type IUser = {
             name: string;
             email: string;
             activeStatus: "ACTIVE" | "INACTIVE";
-            role: "USER" | "ADMIN";
+            role: "USER" | "ADMIN" | "CUSTOMER" | "PROVIDER";
             createdAt: string;
             updatedAt: string;
             profile: UserProfile;
@@ -90,12 +90,12 @@ export function Navbar({ user }: NavbarProps) {
     const handleUserMenuAction = async (action: string) => {
 
         if (action === "dashboard") {
-            if (user.data.profile.role === "USER") {
-                router.push("/dashboard")
+            if (user.data.profile.role === "CUSTOMER") {
+                router.push("/dashboard/customer")
             } else if (user.data.profile.role === "ADMIN") {
-                router.push("/admin-dashboard")
-            } else if (user.data.profile.role === "AUTHOR") {
-                router.push("/author-dashboard")
+                router.push("/dashboard/admin")
+            } else if (user.data.profile.role === "PROVIDER") {
+                router.push("/dashboard/provider")
             }
 
             return;
