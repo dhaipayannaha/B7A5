@@ -38,7 +38,7 @@ export const updateUserRole = async (userId: string, role: string) => {
         return { success: false, message: "You are not authorized to access this resource" };
     }
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}`, {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}/role`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",

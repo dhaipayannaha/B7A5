@@ -3,6 +3,7 @@
 
 import { useTransition } from "react";
 import { updateUserStatus } from "../_actions/updateUser";
+import { toast } from "sonner";
 
 
 const STATUSES = ["ACTIVE", "INACTIVE", "SUSPENDED"] as const;
@@ -15,7 +16,9 @@ export function UserStatusSelect({ userId, currentStatus }: { userId: string; cu
         startTransition(async () => {
             const result = await updateUserStatus(userId, newStatus);
             if (!result.success) {
-                alert(result.message ?? "Failed to update status");
+                toast.error(result.message ?? "Failed to update status", { position: "top-right" });
+            } else {
+                toast.success(`Status updated to ${newStatus}`, { position: "top-right" });
             }
         });
     };

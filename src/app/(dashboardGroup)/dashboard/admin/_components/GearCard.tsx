@@ -4,8 +4,8 @@ import { GearAvailabilityBadge } from "./GearAvailabilityBadge";
 
 export function GearCard({ gear }: { gear: Equipment }) {
     return (
-        <div className="group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md">
-            <div className="relative h-40 w-full bg-muted">
+        <div className="group overflow-hidden rounded-2xl bg-white border border-slate-100/80 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1">
+            <div className="relative h-44 w-full bg-slate-50">
                 <Image
                     src={gear.images?.[0] ?? "/placeholder.png"}
                     alt={gear.title}
@@ -29,9 +29,9 @@ export function GearCard({ gear }: { gear: Equipment }) {
                     <Image
                         src={gear.provider?.image ?? "/placeholder.png"}
                         alt={gear.provider?.name ?? "Provider"}
-                        width={20}
-                        height={20}
-                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        className="rounded-full ring-2 ring-white shadow-sm"
                     />
                     <span className="line-clamp-1 text-xs text-muted-foreground">{gear.provider?.name}</span>
                 </div>
