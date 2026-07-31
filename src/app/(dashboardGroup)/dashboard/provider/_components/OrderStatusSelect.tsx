@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { updateOrderStatus } from "../_actions/updateOrderStatus";
 
 const ORDER_STATUSES = ["PLACED", "CONFIRMED", "CANCELLED", "COMPLETED"] as const;
 
@@ -10,10 +11,10 @@ export function OrderStatusSelect({ orderId, currentStatus }: { orderId: string;
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newStatus = e.target.value;
         startTransition(async () => {
-            // const result = await updateOrderStatus(orderId, newStatus);
-            // if (!result.success) {
-            //     alert(result.message ?? "Failed to update status");
-            // }
+            const result = await updateOrderStatus(orderId, newStatus);
+            if (!result.success) {
+                alert(result.message ?? "Failed to update status");
+            }
         });
     };
 
