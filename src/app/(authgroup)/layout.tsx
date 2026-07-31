@@ -2,13 +2,17 @@ import { Navbar } from '@/components/shared/navbar'
 import { getMe } from '@/services/getMe';
 import React from 'react'
 
-export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+import { Footer } from '@/components/shared/Footer';
 
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
     const user = await getMe();
     return (
-        <div className='max-w-7xl mx-auto'>
+        <div className="flex flex-col min-h-screen max-w-7xl mx-auto">
             <Navbar user={user}></Navbar>
-            {children}
+            <main className="flex-1">
+                {children}
+            </main>
+            <Footer />
         </div>
     )
 }

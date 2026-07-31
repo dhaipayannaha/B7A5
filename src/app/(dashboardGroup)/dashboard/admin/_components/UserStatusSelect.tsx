@@ -25,7 +25,13 @@ export function UserStatusSelect({ userId, currentStatus }: { userId: string; cu
             defaultValue={currentStatus}
             onChange={handleChange}
             disabled={isPending}
-            className="rounded-md border px-2 py-1 text-sm disabled:opacity-50"
+            className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 cursor-pointer ${
+                currentStatus === "ACTIVE"
+                    ? "bg-[#92a417]/10 text-[#92a417] border-[#92a417]/20 hover:bg-[#92a417]/20 focus:ring-[#92a417]/40"
+                    : currentStatus === "SUSPENDED"
+                    ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-200 focus:ring-red-400"
+                    : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 focus:ring-slate-400"
+            }`}
         >
             {STATUSES.map((status) => (
                 <option key={status} value={status}>
