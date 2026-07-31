@@ -2,164 +2,132 @@
 "use server";
 
 import { isAccessTokenExist } from "@/services/refreshToken";
-import { revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
-
+import { revalidatePath } from "next/cache";
 
 type PostState = {
-    success: true,
-    statusCode: number,
+    success: boolean,
+    statusCode?: number,
     message: string,
-    data: Record<string, any>
+    data?: Record<string, any>
 }
 
-/*
-
-    data : {
-        title
-        conten
-    }
-*/
-
-export const createPost = async (prevState: PostState, formData: FormData) => {
-
+export const createPost = async (prevState: PostState | null, formData: FormData) => {
 
     const quantity = Number(formData.get("quantity"));
+    const availableQuantity = Number(formData.get("availableQuantity")) || quantity;
+
+    // Parse images: one per line or comma-separated
+    const imagesRaw = (formData.get("images") as string) ?? "";
+    const images = imagesRaw
+        .split(/[\n,]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
 
     const payload = {
         title: formData.get("title"),
-        description: formData.get("content"), // Form has "content", backend expects "description"
+        description: formData.get("description"),
         brand: formData.get("brand"),
         model: formData.get("model"),
-        dailyRate: Number(formData.get("dailyRate")), // Form has "dailyRate", parsed as number
-        quantity: quantity,
-        availableQuantity: quantity, // Send same quantity by default
-        images: formData.get("thumbnail") ? [formData.get("thumbnail")] : [], // Form has "thumbnail", backend expects "images" array
+        dailyRate: Number(formData.get("dailyRate")),
+        quantity,
+        availableQuantity,
+        images,
         condition: formData.get("condition"),
         status: formData.get("status"),
-        category: formData.get("categoryName"), // Form has "categoryName", backend expects "category"
         categoryName: formData.get("categoryName"),
+    };
 
-        // Extra fields that are in your form (optional)
-        tags: formData.get("tags") ? (formData.get("tags") as string).split(", ") : [],
-        isPremium: formData.get("isPremium") === "on",
-    }
+    console.log("[createPost] payload:", payload);
 
-    console.log({ payload })
-
-    const accessToken = await isAccessTokenExist()
+    const accessToken = await isAccessTokenExist();
 
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear`, {
         method: "POST",
         headers: {
-
             Cookie: `accessToken=${accessToken}`,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     });
 
     const result = await res.json();
 
+    console.log("[createPost] response:", result);
+
     if (result.success) {
-        revalidateTag("gear", "max"); // getGear uses this tag, we must invalidate it to see new gear
+        revalidatePath("/dashboard/provider/gear");
     }
 
     return result;
-}
-export const updatePost = async (postId: string, prevState: PostState, formData: FormData) => {
-    console.log({
-        postId
-    });
-    console.log({
-        title: formData.get("title"),
-        content: formData.get("content"),
-        thumbnail: formData.get("thumbnail"),
-        tags: (formData.get("tags") as string).split(", "),
-        isPremium: formData.get("isPremium") === "on"
-    });
+};
+
+export const updatePost = async (postId: string, prevState: PostState | null, formData: FormData) => {
 
     const quantity = Number(formData.get("quantity"));
-    
+    const availableQuantity = Number(formData.get("availableQuantity")) || quantity;
+
+    const imagesRaw = (formData.get("images") as string) ?? "";
+    const images = imagesRaw
+        .split(/[\n,]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+
     const payload = {
         title: formData.get("title") ?? "",
-        description: formData.get("content") ?? "", // Form has "content"
+        description: formData.get("description") ?? "",
         brand: formData.get("brand") ?? "",
         model: formData.get("model") ?? "",
         dailyRate: Number(formData.get("dailyRate")),
-        quantity: quantity,
-        availableQuantity: quantity,
-        images: formData.get("thumbnail") ? [formData.get("thumbnail")] : [], 
+        quantity,
+        availableQuantity,
+        images,
         condition: formData.get("condition"),
         status: formData.get("status"),
-        category: formData.get("categoryName") ?? "anything",
-        categoryName: formData.get("categoryName") ?? "anything",
-        tags: formData.get("tags") ? (formData.get("tags") as string).split(", ") : [],
-        isPremium: formData.get("isPremium") === "on"
-    }
+        categoryName: formData.get("categoryName") ?? "",
+    };
 
-    const accessToken = await isAccessTokenExist()
+    console.log("[updatePost] payload:", payload);
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts/${postId}`, {
+    const accessToken = await isAccessTokenExist();
+
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear/${postId}`, {
         method: "PATCH",
         headers: {
-
             Cookie: `accessToken=${accessToken}`,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     });
 
     const result = await res.json();
 
-    if (result.success) {
-        revalidateTag("my-posts", "max");
-        revalidateTag("premium-posts", "max"); // invalidate getGear cache
+    console.log("[updatePost] response:", result);
 
-        if (result.data?.isPremium) {
-            revalidateTag("premium-posts", "max");
-        } else {
-            revalidateTag("public-posts", "max");
-        }
+    if (result.success) {
+        revalidatePath("/dashboard/provider/gear");
     }
 
-
-
-    return result
-}
+    return result;
+};
 
 export const getMyPosts = async () => {
+    const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
-
     const accessToken = cookieStore.get("accessToken")?.value || null;
 
     if (!accessToken) {
-        // throw new Error("User Not Logged In!");
-
         return {
             success: false,
-            message: "User not logged in!"
-        }
+            message: "User not logged in!",
+        };
     }
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts/my-posts`, {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear`, {
         headers: {
-            // Authorization : accessToken as unknown as string,
-            // Authorization : `${accessToken}`,
-            // Authorization : `Bearer ${accessToken}`
-
-            Cookie: `accessToken=${accessToken}`
+            Cookie: `accessToken=${accessToken}`,
         },
-
-        cache: "force-cache",
-        next: {
-            revalidate: 60 * 60 * 24, // 1day
-            tags: ["my-posts"]
-        }
+        cache: "no-store",
     });
 
-    const result = res.json();
-
-
-    return result
-}
+    return res.json();
+};

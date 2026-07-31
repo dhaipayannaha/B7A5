@@ -23,7 +23,7 @@ export const updateOrderStatus = async (orderId: string, status: string) => {
     const result = await res.json();
 
     if (result.success) {
-        revalidatePath("/my-orders"); // adjust to your actual route
+        revalidatePath("/dashboard/provider/orders");
     }
 
     return result;

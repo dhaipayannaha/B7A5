@@ -1,6 +1,6 @@
 type UserRole = "PROVIDER" | "CUSTOMER" | "ADMIN"; // add other roles as needed
 type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED"; // adjust based on your actual enum
-type OrderStatus = "PLACED" | "CONFIRMED" | "CANCELLED" | "COMPLETED"; // adjust based on your actual enum
+type OrderStatus = "PLACED" | "CONFIRMED" | "PAID" | "PICKED_UP" | "RETURNED" | "CANCELLED";
 type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED"; // adjust based on your actual enum
 
 interface Customer {

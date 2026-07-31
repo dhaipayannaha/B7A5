@@ -2,7 +2,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogContent,
@@ -13,9 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { Textarea } from "@/components/ui/textarea";
-import { IPost } from "@/lib/types";
+import { Equipment } from "@/lib/types";
 import {
     DollarSignIcon,
     HashIcon,
@@ -25,7 +23,6 @@ import {
     PackageIcon,
     PencilIcon,
     PlusCircleIcon,
-    SparklesIcon,
     TagIcon,
     WrenchIcon,
 } from "lucide-react";
@@ -35,7 +32,7 @@ import { createPost, updatePost } from "../../_actions/myPostAction";
 
 type PostFormDialogProps = {
     mode: "create" | "edit";
-    post?: IPost;
+    post?: Equipment;
 };
 
 function FormField({
@@ -85,13 +82,14 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
             toast.success(
                 state.message ||
                     (mode === "edit"
-                        ? "Post updated successfully"
-                        : "Post created successfully")
+                        ? "Gear updated successfully"
+                        : "Gear listed successfully!"),
+                { position: "top-right" }
             );
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setOpen(false);
         } else {
-            toast.error(state.message || "Something went wrong");
+            toast.error(state.message || "Something went wrong", { position: "top-right" });
         }
     }, [state, mode]);
 
@@ -111,9 +109,9 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                             Edit
                         </Button>
                     ) : (
-                        <Button className="gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md hover:shadow-primary/30 hover:shadow-lg transition-all duration-300">
+                        <Button className="gap-2 bg-[#92a417] hover:bg-[#829214] text-white shadow-md shadow-[#92a417]/20 transition-all duration-300">
                             <PlusCircleIcon size={16} />
-                            Create Post
+                            Add Gear
                         </Button>
                     )
                 }
@@ -121,22 +119,22 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
 
             <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden rounded-2xl border border-border/50 shadow-2xl">
                 {/* ── Gradient Header ── */}
-                <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-6 py-5 border-b border-border/50">
+                <div className="bg-gradient-to-r from-[#92a417]/10 via-[#92a417]/5 to-transparent px-6 py-5 border-b border-border/50">
                     <DialogHeader>
                         <DialogTitle className="text-xl font-bold flex items-center gap-2">
                             {isEdit ? (
                                 <>
-                                    <div className="p-1.5 rounded-lg bg-primary/10">
-                                        <PencilIcon size={16} className="text-primary" />
+                                    <div className="p-1.5 rounded-lg bg-[#92a417]/10">
+                                        <PencilIcon size={16} className="text-[#92a417]" />
                                     </div>
-                                    Edit Post
+                                    Edit Gear Listing
                                 </>
                             ) : (
                                 <>
-                                    <div className="p-1.5 rounded-lg bg-primary/10">
-                                        <PlusCircleIcon size={16} className="text-primary" />
+                                    <div className="p-1.5 rounded-lg bg-[#92a417]/10">
+                                        <PlusCircleIcon size={16} className="text-[#92a417]" />
                                     </div>
-                                    Create New Post
+                                    List New Gear
                                 </>
                             )}
                         </DialogTitle>
@@ -151,28 +149,26 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                 {/* ── Scrollable Form Body ── */}
                 <form action={formAction}>
                     <div className="overflow-y-auto max-h-[65vh] px-6 py-5 space-y-5">
+                        
                         {/* ── Basic Info ── */}
                         <SectionHeading>Basic Information</SectionHeading>
 
                         <FormField label="Title" icon={TagIcon}>
                             <Input
-                                id="title"
                                 name="title"
                                 defaultValue={post?.title}
                                 placeholder="e.g. Sony A7 III Camera"
                                 required
-                                className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
                             />
                         </FormField>
 
-                        <FormField label="Description / Content" icon={LayersIcon}>
+                        <FormField label="Description" icon={LayersIcon}>
                             <Textarea
-                                id="content"
-                                name="content"
-                                defaultValue={post?.content}
+                                name="description"
+                                defaultValue={post?.description}
                                 required
                                 placeholder="Describe your gear in detail — condition, accessories included, usage tips..."
-                                className="min-h-24 resize-none transition-shadow focus:shadow-sm focus:shadow-primary/20"
+                                className="min-h-24 resize-none"
                             />
                         </FormField>
 
@@ -182,50 +178,53 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                         <div className="grid grid-cols-2 gap-4">
                             <FormField label="Brand" icon={WrenchIcon}>
                                 <Input
-                                    id="brand"
                                     name="brand"
                                     defaultValue={post?.brand}
                                     placeholder="e.g. Sony, DJI, Canon"
                                     required
-                                    className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
                                 />
                             </FormField>
 
                             <FormField label="Model" icon={PackageIcon}>
                                 <Input
-                                    id="model"
                                     name="model"
                                     defaultValue={post?.model}
                                     placeholder="e.g. A7 III"
                                     required
-                                    className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
                                 />
                             </FormField>
 
                             <FormField label="Category" icon={HashIcon}>
-                                <Input
-                                    id="categoryName"
+                                <select
                                     name="categoryName"
-                                    defaultValue={post?.categoryName}
-                                    placeholder="e.g. Camera, Drone, Lens"
+                                    defaultValue={post?.category?.name ?? ""}
+                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
                                     required
-                                    className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
-                                />
+                                >
+                                    <option value="" disabled>Select a category</option>
+                                    <option value="Cycling">🚴 Cycling</option>
+                                    <option value="Camping">⛺ Camping</option>
+                                    <option value="Fitness">💪 Fitness</option>
+                                    <option value="Water Sports">🏄 Water Sports</option>
+                                    <option value="Hiking">🥾 Hiking</option>
+                                    <option value="Winter Sports">⛷️ Winter Sports</option>
+                                    <option value="Team Sports">⚽ Team Sports</option>
+                                    <option value="Photography & Film">📷 Photography &amp; Film</option>
+                                </select>
                             </FormField>
 
                             <FormField label="Condition">
                                 <select
-                                    id="condition"
                                     name="condition"
                                     defaultValue={post?.condition ?? ""}
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                                    required
                                 >
                                     <option value="" disabled>Select condition</option>
                                     <option value="NEW">🌟 New</option>
-                                    <option value="LIKE_NEW">✨ Like New</option>
+                                    <option value="EXCELLENT">✨ Excellent</option>
                                     <option value="GOOD">👍 Good</option>
                                     <option value="FAIR">🔧 Fair</option>
-                                    <option value="POOR">⚠️ Poor</option>
                                 </select>
                             </FormField>
                         </div>
@@ -233,97 +232,65 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                         {/* ── Pricing & Stock ── */}
                         <SectionHeading>Pricing &amp; Stock</SectionHeading>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField label="Daily Rate ($)" icon={DollarSignIcon}>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">
-                                        $
-                                    </span>
-                                    <Input
-                                        id="dailyRate"
-                                        name="dailyRate"
-                                        type="number"
-                                        min={0}
-                                        step={0.01}
-                                        defaultValue={post?.dailyRate}
-                                        placeholder="0.00"
-                                        required
-                                        className="pl-7 transition-shadow focus:shadow-sm focus:shadow-primary/20"
-                                    />
-                                </div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <FormField label="Daily Rate (৳)" icon={DollarSignIcon}>
+                                <Input
+                                    name="dailyRate"
+                                    type="number"
+                                    min={0}
+                                    step={0.01}
+                                    defaultValue={post?.dailyRate}
+                                    placeholder="0.00"
+                                    required
+                                />
                             </FormField>
 
-                            <FormField label="Quantity Available" icon={PackageIcon}>
+                            <FormField label="Total Quantity" icon={PackageIcon}>
                                 <Input
-                                    id="quantity"
                                     name="quantity"
                                     type="number"
                                     min={1}
                                     defaultValue={post?.quantity}
-                                    placeholder="e.g. 3"
+                                    placeholder="e.g. 10"
                                     required
-                                    className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
                                 />
                             </FormField>
-                        </div>
 
-                        {/* ── Visibility ── */}
-                        <SectionHeading>Visibility &amp; Media</SectionHeading>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField label="Status">
-                                <select
-                                    id="status"
-                                    name="status"
-                                    defaultValue={post?.status ?? "DRAFT"}
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <option value="DRAFT">📝 Draft</option>
-                                    <option value="PUBLISHED">🟢 Published</option>
-                                    <option value="ARCHIVED">📦 Archived</option>
-                                </select>
-                            </FormField>
-
-                            <FormField label="Tags (comma separated)" icon={HashIcon}>
+                            <FormField label="Available Qty" icon={PackageIcon}>
                                 <Input
-                                    id="tags"
-                                    name="tags"
-                                    defaultValue={post?.tags?.join(", ")}
-                                    placeholder="camera, sony, video"
-                                    className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
+                                    name="availableQuantity"
+                                    type="number"
+                                    min={0}
+                                    defaultValue={post?.availableQuantity}
+                                    placeholder="e.g. 10"
+                                    required
                                 />
                             </FormField>
                         </div>
 
-                        <FormField label="Thumbnail URL" icon={ImageIcon}>
-                            <Input
-                                id="thumbnail"
-                                name="thumbnail"
-                                type="url"
-                                defaultValue={post?.thumbnail ?? ""}
-                                placeholder="https://example.com/image.jpg"
-                                className="transition-shadow focus:shadow-sm focus:shadow-primary/20"
-                            />
+                        {/* ── Visibility & Images ── */}
+                        <SectionHeading>Visibility &amp; Images</SectionHeading>
+
+                        <FormField label="Status">
+                            <select
+                                name="status"
+                                defaultValue={post?.status ?? "AVAILABLE"}
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                            >
+                                <option value="AVAILABLE">🟢 Available</option>
+                                <option value="UNAVAILABLE">🔴 Unavailable</option>
+                                <option value="MAINTENANCE">🔧 Maintenance</option>
+                            </select>
                         </FormField>
 
-                        {/* ── Premium toggle ── */}
-                        <label className="flex items-center gap-3 cursor-pointer rounded-xl border border-border/60 bg-gradient-to-r from-amber-500/5 to-transparent px-4 py-3 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all duration-200 group">
-                            <Checkbox
-                                id="isPremium"
-                                name="isPremium"
-                                defaultChecked={post?.isPremium}
-                                className="data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                        <FormField label="Image URLs (one per line)" icon={ImageIcon}>
+                            <Textarea
+                                name="images"
+                                defaultValue={post?.images?.join("\n")}
+                                placeholder={"https://example.com/image1.jpg\nhttps://example.com/image2.jpg"}
+                                className="min-h-20 resize-none font-mono text-xs"
                             />
-                            <div>
-                                <div className="flex items-center gap-1.5 text-sm font-semibold group-hover:text-amber-600 transition-colors">
-                                    <SparklesIcon size={14} className="text-amber-500" />
-                                    Mark as Premium Content
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                    Premium listings get featured placement and higher visibility
-                                </p>
-                            </div>
-                        </label>
+                        </FormField>
                     </div>
 
                     {/* ── Footer ── */}
@@ -339,7 +306,7 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                         <Button
                             type="submit"
                             disabled={pending}
-                            className="gap-2 min-w-32 bg-gradient-to-r from-primary to-primary/80 shadow hover:shadow-primary/30 hover:shadow-md transition-all duration-300"
+                            className="gap-2 min-w-32 bg-[#92a417] hover:bg-[#829214] text-white shadow hover:shadow-md transition-all duration-300"
                         >
                             {pending ? (
                                 <>
@@ -354,7 +321,7 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                             ) : (
                                 <>
                                     <PlusCircleIcon size={14} />
-                                    Create Post
+                                    List Gear
                                 </>
                             )}
                         </Button>
