@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+      },
+    ],
+  },
   webpack: (config) => {
     // Remove CaseSensitiveModulesPlugin to avoid duplicate module errors
     // caused by mixed casing of the project path on Windows

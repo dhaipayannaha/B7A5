@@ -43,7 +43,7 @@ export const sidebarMenuItems: Record<string, ISidebarItem[]> = {
             icon: LayoutDashboard,
         },
         {
-            label: "Manage Users",
+            label: "All Users",
             href: "/dashboard/admin/users",
             icon: Users,
         },
@@ -51,11 +51,6 @@ export const sidebarMenuItems: Record<string, ISidebarItem[]> = {
             label: "All Posts",
             href: "/dashboard/admin/posts",
             icon: FileText,
-        },
-        {
-            label: "All Users",
-            href: "/dashboard/admin/users",
-            icon: Users,
         },
         {
             label: "All Rented",
