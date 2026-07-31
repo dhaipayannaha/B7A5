@@ -1,11 +1,11 @@
 
-import { GearItem } from "@/lib/types";
+import { Equipment } from "@/lib/types";
 import { GearCard } from "../_components/GearCard";
 import { getAllGear } from "../_actions/getAllGear";
 
 export default async function AdminGearPage() {
     const result = await getAllGear();
-    const gearItems: GearItem[] = result.success ? result.data : [];
+    const gearItems: Equipment[] = result.success ? result.data : [];
 
     return (
         <div className="space-y-6 p-6">

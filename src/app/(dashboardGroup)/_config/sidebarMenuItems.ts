@@ -48,8 +48,8 @@ export const sidebarMenuItems: Record<string, ISidebarItem[]> = {
             icon: Users,
         },
         {
-            label: "All Posts",
-            href: "/dashboard/admin/posts",
+            label: "All Gear",
+            href: "/dashboard/admin/gear",
             icon: FileText,
         },
         {
