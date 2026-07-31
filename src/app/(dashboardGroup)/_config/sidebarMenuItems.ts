@@ -26,6 +26,11 @@ export const sidebarMenuItems: Record<string, ISidebarItem[]> = {
             icon: FileText,
         },
         {
+            label: "My Orders",
+            href: "/dashboard/provider/orders",
+            icon: FileText,
+        },
+        {
             label: "My Profile",
             href: "/dashboard/provider/my-profile",
             icon: User,

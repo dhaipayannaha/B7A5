@@ -128,6 +128,12 @@ export type IPost = {
     views: number;
     isPremium: boolean;
     authorId: string;
+    brand?: string;
+    model?: string;
+    dailyRate?: number;
+    quantity?: number;
+    condition?: string;
+    categoryName?: string;
     author?: IAuthor;
     comments?: IComment[];
     _count?: {

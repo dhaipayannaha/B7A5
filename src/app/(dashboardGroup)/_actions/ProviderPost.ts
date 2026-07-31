@@ -17,3 +17,5 @@ export const providerPost = async () => {
     const myGears = gears.filter((gear) => gear.providerId === userId);
     return myGears;
 }
+
+

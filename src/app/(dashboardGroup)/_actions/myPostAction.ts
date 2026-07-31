@@ -23,71 +23,35 @@ type PostState = {
 
 export const createPost = async (prevState: PostState, formData: FormData) => {
 
-    console.log({
-        title: formData.get("title"),
-        content: formData.get("content"),
-        thumbnail: formData.get("thumbnail"),
-        tags: (formData.get("tags") as string).split(", "),
-        isPremium: formData.get("isPremium") === "on"
-    });
+
+    const quantity = Number(formData.get("quantity"));
 
     const payload = {
         title: formData.get("title"),
-        content: formData.get("content"),
-        thumbnail: formData.get("thumbnail"),
-        tags: (formData.get("tags") as string).split(", "),
-        isPremium: formData.get("isPremium") === "on"
+        description: formData.get("content"), // Form has "content", backend expects "description"
+        brand: formData.get("brand"),
+        model: formData.get("model"),
+        dailyRate: Number(formData.get("dailyRate")), // Form has "dailyRate", parsed as number
+        quantity: quantity,
+        availableQuantity: quantity, // Send same quantity by default
+        images: formData.get("thumbnail") ? [formData.get("thumbnail")] : [], // Form has "thumbnail", backend expects "images" array
+        condition: formData.get("condition"),
+        status: formData.get("status"),
+        category: formData.get("categoryName"), // Form has "categoryName", backend expects "category"
+        categoryName: formData.get("categoryName"),
+
+        // Extra fields that are in your form (optional)
+        tags: formData.get("tags") ? (formData.get("tags") as string).split(", ") : [],
+        isPremium: formData.get("isPremium") === "on",
     }
 
-    // const cookieStore = await cookies();
-
-    // let accessToken = cookieStore.get("accessToken")?.value || null;
-    // const refreshToken = cookieStore.get("refreshToken")?.value || null;
-
-    // if (!accessToken && !refreshToken) {
-    //     // throw new Error("User Not Logged In!");
-
-    //     return {
-    //         success: false,
-    //         message: "User not logged in!"
-    //     }
-    // }
-
-    // const decodedAccessToken = accessToken ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string) : null;
-
-    // const decodedRefreshToken = refreshToken ? jwtUtils.verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET as string) : null;
-
-    // if(!decodedAccessToken?.success && decodedRefreshToken?.success){
-    //         //access token has expired but refresh token is valid, get new access token from backend
-    //         const result = await getNewAccessToken();
-
-    //         if(result.success){
-    //             const newAccessToken = result.data.accessToken;
-
-    //             cookieStore.set("accessToken", newAccessToken , {
-    //                 httpOnly : true,
-    //                 maxAge : 60 * 60 * 24,
-    //                 sameSite : "lax",
-    //             });
-
-    //             accessToken = newAccessToken;
-
-
-
-    //         }
-    //     }
+    console.log({ payload })
 
     const accessToken = await isAccessTokenExist()
 
-
-
-
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts`, {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear`, {
         method: "POST",
         headers: {
-            // Authorization : accessToken as unknown as string,
-            // Authorization : `${accessToken}`,
-            // Authorization : `Bearer ${accessToken}`
 
             Cookie: `accessToken=${accessToken}`,
             "Content-Type": "application/json"
@@ -98,24 +62,10 @@ export const createPost = async (prevState: PostState, formData: FormData) => {
     const result = await res.json();
 
     if (result.success) {
-        revalidateTag("my-posts", {
-            expire: 0
-        })
+        revalidateTag("gear", "max"); // getGear uses this tag, we must invalidate it to see new gear
     }
 
-    if (result.success && result.data.isPremium) {
-        revalidateTag("premium-posts", {
-            expire: 0
-        })
-    } else {
-        revalidateTag("public-posts", {
-            expire: 0
-        })
-    }
-
-
-
-    return result
+    return result;
 }
 export const updatePost = async (postId: string, prevState: PostState, formData: FormData) => {
     console.log({
@@ -129,60 +79,30 @@ export const updatePost = async (postId: string, prevState: PostState, formData:
         isPremium: formData.get("isPremium") === "on"
     });
 
+    const quantity = Number(formData.get("quantity"));
+    
     const payload = {
         title: formData.get("title") ?? "",
-        content: formData.get("content") ?? "",
-        thumbnail: formData.get("thumbnail") ?? "",
-        tags: (formData.get("tags") as string).split(", ") ?? "",
+        description: formData.get("content") ?? "", // Form has "content"
+        brand: formData.get("brand") ?? "",
+        model: formData.get("model") ?? "",
+        dailyRate: Number(formData.get("dailyRate")),
+        quantity: quantity,
+        availableQuantity: quantity,
+        images: formData.get("thumbnail") ? [formData.get("thumbnail")] : [], 
+        condition: formData.get("condition"),
+        status: formData.get("status"),
+        category: formData.get("categoryName") ?? "anything",
+        categoryName: formData.get("categoryName") ?? "anything",
+        tags: formData.get("tags") ? (formData.get("tags") as string).split(", ") : [],
         isPremium: formData.get("isPremium") === "on"
     }
-
-    // const cookieStore = await cookies();
-
-    // let accessToken = cookieStore.get("accessToken")?.value || null;
-    // const refreshToken = cookieStore.get("refreshToken")?.value || null;
-
-    // if (!accessToken && !refreshToken) {
-    //     // throw new Error("User Not Logged In!");
-
-    //     return {
-    //         success: false,
-    //         message: "User not logged in!"
-    //     }
-    // }
-
-    // const decodedAccessToken = accessToken ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string) : null;
-
-    // const decodedRefreshToken = refreshToken ? jwtUtils.verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET as string) : null;
-
-    // if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
-    //     //access token has expired but refresh token is valid, get new access token from backend
-    //     const result = await getNewAccessToken();
-
-    //     if (result.success) {
-    //         const newAccessToken = result.data.accessToken;
-
-    //         cookieStore.set("accessToken", newAccessToken, {
-    //             httpOnly: true,
-    //             maxAge: 60 * 60 * 24,
-    //             sameSite: "lax",
-    //         });
-
-    //         accessToken = newAccessToken;
-
-
-
-    //     }
-    // }
 
     const accessToken = await isAccessTokenExist()
 
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts/${postId}`, {
         method: "PATCH",
         headers: {
-            // Authorization : accessToken as unknown as string,
-            // Authorization : `${accessToken}`,
-            // Authorization : `Bearer ${accessToken}`
 
             Cookie: `accessToken=${accessToken}`,
             "Content-Type": "application/json"
@@ -193,19 +113,14 @@ export const updatePost = async (postId: string, prevState: PostState, formData:
     const result = await res.json();
 
     if (result.success) {
-        revalidateTag("my-posts", {
-            expire: 0
-        })
-    }
+        revalidateTag("my-posts", "max");
+        revalidateTag("premium-posts", "max"); // invalidate getGear cache
 
-    if (result.success && result.data.isPremium) {
-        revalidateTag("premium-posts", {
-            expire: 0
-        })
-    } else {
-        revalidateTag("public-posts", {
-            expire: 0
-        })
+        if (result.data?.isPremium) {
+            revalidateTag("premium-posts", "max");
+        } else {
+            revalidateTag("public-posts", "max");
+        }
     }
 
 
