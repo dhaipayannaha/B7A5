@@ -22,7 +22,7 @@ export function UserStatusSelect({ userId, currentStatus }: { userId: string; cu
 
     return (
         <select
-            defaultValue={currentStatus}
+            value={currentStatus}
             onChange={handleChange}
             disabled={isPending}
             className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 cursor-pointer ${

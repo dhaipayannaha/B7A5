@@ -21,7 +21,7 @@ export function UserRoleSelect({ userId, currentRole }: { userId: string; curren
 
     return (
         <select
-            defaultValue={currentRole}
+            value={currentRole}
             onChange={handleChange}
             disabled={isPending}
             className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm transition-all hover:bg-slate-50 focus:border-[#92a417] focus:outline-none focus:ring-1 focus:ring-[#92a417] disabled:opacity-50 text-slate-700 cursor-pointer"

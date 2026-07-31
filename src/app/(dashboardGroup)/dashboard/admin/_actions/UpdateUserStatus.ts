@@ -12,7 +12,7 @@ export const updateUserStatus = async (userId: string, status: string) => {
         return { success: false, message: "You are not authorized to access this resource" };
     }
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}/status`, {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export const updateUserStatus = async (userId: string, status: string) => {
     const result = await res.json();
 
     if (result.success) {
-        revalidatePath("/admin/users"); // adjust to your actual route
+        revalidatePath("/dashboard/admin/users"); // adjust to your actual route
     }
 
     return result;
@@ -38,7 +38,7 @@ export const updateUserRole = async (userId: string, role: string) => {
         return { success: false, message: "You are not authorized to access this resource" };
     }
 
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}/role`, {
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/admin/users/${userId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export const updateUserRole = async (userId: string, role: string) => {
     const result = await res.json();
 
     if (result.success) {
-        revalidatePath("/admin/users");
+        revalidatePath("/dashboard/admin/users");
     }
 
     return result;
