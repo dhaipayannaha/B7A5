@@ -16,14 +16,27 @@ export function PaymentSuccessContent() {
 
     useEffect(() => {
         const transactionId = searchParams?.get("transactionId") || searchParams?.get("session_id");
-        const rentalOrderId = searchParams?.get("rentalOrderId");
+
+        const getCookie = (name: string) => {
+            const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+            return match ? decodeURIComponent(match[2]) : null;
+        };
+
+        const rentalOrderId =
+            searchParams?.get("rentalOrderId") ||
+            getCookie("pendingRentalOrderId");
+
+        console.log("[SuccessPage] transactionId:", transactionId);
+        console.log("[SuccessPage] rentalOrderId:", rentalOrderId);
+        console.log("[SuccessPage] all cookies:", document.cookie);
 
         if (!transactionId || !rentalOrderId) {
             setStatus("error");
-            setMessage("Invalid payment confirmation link. Missing transaction or order IDs.");
+            setMessage(`Missing IDs — transactionId: ${transactionId ?? "MISSING"}, rentalOrderId: ${rentalOrderId ?? "MISSING"}`);
             return;
         }
 
+        document.cookie = "pendingRentalOrderId=; max-age=0; path=/";
         let isMounted = true;
 
         const confirmPayment = async () => {

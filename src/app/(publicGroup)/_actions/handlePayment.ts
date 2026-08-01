@@ -62,6 +62,16 @@ export const handlePayment = async (payload: RentalPayload) => {
 
     // ✅ Log the backend response from payment API
     console.log("[handlePayment] Payment Response ←", JSON.stringify(paymentResult, null, 2));
+    console.log("[handlePayment] rentalOrderId to store:", rentalOrderId);
 
-    return paymentResult;
+    // ✅ Store rentalOrderId in a cookie so it survives the Stripe redirect
+    // (sessionStorage doesn't survive navigation to external domains and back)
+    cookieStore.set("pendingRentalOrderId", rentalOrderId, {
+        httpOnly: false,   // must be readable by client JS on success page
+        maxAge: 60 * 30,  // 30 minutes
+        path: "/",
+        sameSite: "lax",
+    });
+
+    return { ...paymentResult, rentalOrderId };
 };

@@ -74,10 +74,14 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
                     const paymentUrl = result.url || result.payment_url || result.data?.url || result.data?.payment_url || (typeof result.data === 'string' ? result.data : null);
                     
                     if (typeof paymentUrl === "string" && paymentUrl.startsWith("http")) {
-                        // Redirect to the payment gateway (Stripe Checkout)
+                        // 💾 Save rentalOrderId so the success page can use it
+                        if (result.rentalOrderId) {
+                            sessionStorage.setItem("pendingRentalOrderId", result.rentalOrderId);
+                        }
+                        // Redirect to Stripe Checkout
                         toast.loading("Redirecting to Stripe Checkout...");
                         window.location.href = paymentUrl;
-                        return; // Stop execution here
+                        return;
                     }
 
                     // Fallback if no URL is found but success is true

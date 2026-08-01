@@ -1,21 +1,21 @@
-import { Suspense } from "react";
-import { PaymentSuccessContent } from "./PaymentSuccessContent";
-import { Loader2Icon } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default function PaymentSuccessPage() {
-    return (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center p-4 text-center">
-            <Suspense
-                fallback={
-                    <div className="flex flex-col items-center gap-4">
-                        <Loader2Icon className="h-10 w-10 animate-spin text-[#92a417]" />
-                        <h2 className="text-xl font-semibold">Confirming your payment...</h2>
-                        <p className="text-muted-foreground">Please don't close this page.</p>
-                    </div>
-                }
-            >
-                <PaymentSuccessContent />
-            </Suspense>
-        </div>
-    );
+/**
+ * The backend currently redirects Stripe to /success?session_id=...
+ * This page forwards everything straight to /payment/success so both URLs work.
+ * When you update your backend's success_url to /payment/success, this file can be deleted.
+ */
+export default function SuccessRedirectPage({
+    searchParams,
+}: {
+    searchParams: Record<string, string | string[] | undefined>;
+}) {
+    const qs = new URLSearchParams(
+        Object.entries(searchParams).flatMap(([k, v]) =>
+            Array.isArray(v) ? v.map((val) => [k, val]) : v ? [[k, v]] : []
+        )
+    ).toString();
+
+    redirect(`/payment/success${qs ? `?${qs}` : ""}`);
 }
+
