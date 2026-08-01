@@ -14,27 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon, CreditCardIcon, Loader2Icon, ShoppingCartIcon } from "lucide-react";
 import { toast } from "sonner";
+import { handlePayment } from "../../_actions/handlePayment";
 
 interface RentNowDialogProps {
     gearId: string;
     gearTitle: string;
     dailyRate: number;
     availableQuantity: number;
-}
-
-async function placeOrder(payload: {
-    gearItemId: string;
-    startDate: string;
-    endDate: string;
-    quantity: number;
-}) {
-    const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "include",
-    });
-    return res.json();
 }
 
 export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity }: RentNowDialogProps) {
@@ -56,6 +42,7 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!startDate || !endDate) {
             toast.error("Please select both start and end dates.");
             return;
@@ -65,25 +52,50 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
             return;
         }
 
+        // Build payload matching the backend schema
+        const payload = {
+            gearItemId: gearId,
+            startDate: new Date(startDate).toISOString(),  // "2026-08-05T00:00:00.000Z"
+            endDate: new Date(endDate).toISOString(),      // "2026-08-10T00:00:00.000Z"
+            totalAmount,
+        };
+
+        // ✅ Log in browser console too
+        console.log("[RentNowDialog] Submitting payload:", payload);
+
         startTransition(async () => {
             try {
-                const result = await placeOrder({
-                    gearItemId: gearId,
-                    startDate,
-                    endDate,
-                    quantity,
-                });
-                if (result.success) {
-                    toast.success("Order placed successfully! Check your dashboard.", { position: "top-right" });
+                const result = await handlePayment(payload);
+                console.log("[RentNowDialog] handlePayment result:", result);
+
+                if (result?.success) {
+                    // Look for the payment URL in the response
+                    // It might be at result.url, result.data.url, or result.payment_url
+                    const paymentUrl = result.url || result.payment_url || result.data?.url || result.data?.payment_url || (typeof result.data === 'string' ? result.data : null);
+                    
+                    if (typeof paymentUrl === "string" && paymentUrl.startsWith("http")) {
+                        // Redirect to the payment gateway (Stripe Checkout)
+                        toast.loading("Redirecting to Stripe Checkout...");
+                        window.location.href = paymentUrl;
+                        return; // Stop execution here
+                    }
+
+                    // Fallback if no URL is found but success is true
+                    toast.success("Rental booked successfully! Check your dashboard.", {
+                        position: "top-right",
+                    });
                     setOpen(false);
                     setStartDate("");
                     setEndDate("");
                     setQuantity(1);
                 } else {
-                    toast.error(result.message || "Failed to place order. Please try again.", { position: "top-right" });
+                    toast.error(result?.message || "Failed to book rental. Please try again.", {
+                        position: "top-right",
+                    });
                 }
-            } catch {
-                toast.error("Something went wrong. Please try again.");
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : "Something went wrong.";
+                toast.error(msg, { position: "top-right" });
             }
         });
     };
@@ -160,7 +172,7 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
                         <p className="text-xs text-muted-foreground">{availableQuantity} unit(s) available</p>
                     </div>
 
-                    {/* Summary */}
+                    {/* Order Summary */}
                     <div className="rounded-xl bg-slate-50 border border-slate-100 p-4 space-y-2">
                         <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">Daily rate</span>
@@ -181,7 +193,12 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
                     </div>
 
                     <DialogFooter className="gap-2 pt-1">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                            className="flex-1"
+                        >
                             Cancel
                         </Button>
                         <Button
