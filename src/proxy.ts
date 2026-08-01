@@ -13,7 +13,7 @@ const AUTH_ROUTES = [
 ]
 const PUBLIC_ROUTES = [
     "/", "/news", "/login",
-    "/register",
+    "/register", "/gear"
 ]
 
 // This function can be marked `async` if using `await` inside

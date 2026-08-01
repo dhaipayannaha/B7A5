@@ -16,19 +16,16 @@ export const getGear = async ({ query }: { query?: { [key: string]: string | str
     }
 
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value
-    if (!accessToken) {
-        return {
-            success: false,
-            message: "You are not authorized to access this resource"
-        }
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    const headers: Record<string, string> = {};
+    if (accessToken) {
+        headers["Cookie"] = `accessToken=${accessToken}`;
     }
 
     const queryString = params.toString();
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/gear${queryString ? `?${queryString}` : ''}`, {
-        headers: {
-            Cookie: `accessToken=${accessToken}`
-        },
+        headers,
         ...(query?.searchTerm
             ? { cache: "no-store" }
             : {

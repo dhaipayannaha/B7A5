@@ -26,7 +26,7 @@ import {
     TagIcon,
     WrenchIcon,
 } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { createPost, updatePost } from "../../_actions/myPostAction";
 
@@ -68,13 +68,25 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 export function PostFormDialog({ mode, post }: PostFormDialogProps) {
     const [open, setOpen] = useState(false);
+    const [formKey, setFormKey] = useState(0);
 
-    const action =
-        mode === "edit" && post
-            ? updatePost.bind(null, post.id)
-            : createPost;
+    // Stable reference — must not be recreated on every render
+    const action = useMemo(
+        () =>
+            mode === "edit" && post
+                ? updatePost.bind(null, post.id)
+                : createPost,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [mode, post?.id]
+    );
 
     const [state, formAction, pending] = useActionState(action, null) as any;
+
+    // Reset form state when dialog opens
+    const handleOpenChange = (val: boolean) => {
+        setOpen(val);
+        if (val) setFormKey((k) => k + 1); // fresh form every open
+    };
 
     useEffect(() => {
         if (!state) return;
@@ -96,7 +108,7 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
     const isEdit = mode === "edit";
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger
                 render={
                     isEdit ? (
@@ -147,7 +159,7 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                 </div>
 
                 {/* ── Scrollable Form Body ── */}
-                <form action={formAction}>
+                <form key={formKey} action={formAction}>
                     <div className="overflow-y-auto max-h-[65vh] px-6 py-5 space-y-5">
                         
                         {/* ── Basic Info ── */}

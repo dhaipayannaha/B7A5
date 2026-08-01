@@ -27,8 +27,9 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 
 // ── What action (button label + next status) the PROVIDER can take ───────────
 const PROVIDER_ACTIONS: Partial<Record<OrderStatus, { label: string; nextStatus: OrderStatus; color: string }>> = {
-    PLACED:    { label: "✓ Confirm Order",   nextStatus: "CONFIRMED",  color: "bg-blue-600 hover:bg-blue-700 text-white" },
-    PAID:      { label: "📦 Mark Picked Up", nextStatus: "PICKED_UP", color: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+    PLACED:    { label: "✓ Confirm Order",    nextStatus: "CONFIRMED", color: "bg-blue-600 hover:bg-blue-700 text-white" },
+    PAID:      { label: "📦 Mark Picked Up",  nextStatus: "PICKED_UP", color: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+    PICKED_UP: { label: "↩ Mark Returned",    nextStatus: "RETURNED",  color: "bg-slate-600 hover:bg-slate-700 text-white" },
 };
 
 export function OrderStatusSelect({

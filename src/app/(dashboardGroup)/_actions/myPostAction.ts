@@ -73,25 +73,26 @@ export const updatePost = async (postId: string, prevState: PostState | null, fo
         .filter(Boolean);
 
     const payload = {
-        title: formData.get("title") ?? "",
-        description: formData.get("description") ?? "",
-        brand: formData.get("brand") ?? "",
-        model: formData.get("model") ?? "",
+        title: formData.get("title"),
+        description: formData.get("description"),
+        brand: formData.get("brand"),
+        model: formData.get("model"),
         dailyRate: Number(formData.get("dailyRate")),
         quantity,
         availableQuantity,
         images,
         condition: formData.get("condition"),
         status: formData.get("status"),
-        categoryName: formData.get("categoryName") ?? "",
+        categoryName: formData.get("categoryName"),
     };
 
-    console.log("[updatePost] payload:", payload);
+    console.log("[updatePost] postId:", postId);
+    console.log("[updatePost] payload:", JSON.stringify(payload, null, 2));
 
     const accessToken = await isAccessTokenExist();
 
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear/${postId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
             Cookie: `accessToken=${accessToken}`,
             "Content-Type": "application/json",
@@ -99,9 +100,16 @@ export const updatePost = async (postId: string, prevState: PostState | null, fo
         body: JSON.stringify(payload),
     });
 
-    const result = await res.json();
+    const text = await res.text();
+    console.log("[updatePost] status:", res.status);
+    console.log("[updatePost] raw response:", text);
 
-    console.log("[updatePost] response:", result);
+    let result;
+    try {
+        result = JSON.parse(text);
+    } catch {
+        return { success: false, message: `Server error: ${text}` };
+    }
 
     if (result.success) {
         revalidatePath("/dashboard/provider/gear");
@@ -130,4 +138,23 @@ export const getMyPosts = async () => {
     });
 
     return res.json();
+};
+
+export const deletePost = async (postId: string) => {
+    const accessToken = await isAccessTokenExist();
+
+    const res = await fetch(`${process.env.BACKEND_API_URL}/api/provider/gear/${postId}`, {
+        method: "DELETE",
+        headers: {
+            Cookie: `accessToken=${accessToken}`,
+        },
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+        revalidatePath("/dashboard/provider/gear");
+    }
+
+    return result;
 };

@@ -52,11 +52,11 @@ export const loginAction = async (redirectTo: string, prevState: LoginState | nu
         if (redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
             redirect(redirectTo);
         } else if (decodedToken.role === "CUSTOMER") {
-            redirect("/dashboard");
+            redirect("/dashboard/customer");
         } else if (decodedToken.role === "ADMIN") {
-            redirect("/admin-dashboard");
+            redirect("/dashboard/admin");
         } else if (decodedToken.role === "PROVIDER") {
-            redirect("/provider-dashboard");
+            redirect("/dashboard/provider");
         }
     }
 

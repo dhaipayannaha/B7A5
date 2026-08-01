@@ -1,15 +1,34 @@
 "use client";
 
 import { Equipment } from "@/lib/types";
-import { SparklesIcon, Calendar, Package, DollarSign } from "lucide-react";
+import { Package, DollarSign, Trash2, Loader2Icon } from "lucide-react";
 import Image from "next/image";
+import { PostFormDialog } from "./PostFromDialog";
+import { useTransition } from "react";
+import { deletePost } from "../../_actions/myPostAction";
+import { toast } from "sonner";
 
 export function MyGearCard({ gear }: { gear: Equipment }) {
+    const [isPending, startTransition] = useTransition();
+
+    const handleDelete = () => {
+        if (!confirm(`Are you sure you want to delete "${gear.title}"?`)) return;
+        
+        startTransition(async () => {
+            const result = await deletePost(gear.id);
+            if (!result.success) {
+                toast.error(result.message || "Failed to delete gear", { position: "top-right" });
+            } else {
+                toast.success("Gear deleted successfully", { position: "top-right" });
+            }
+        });
+    };
+
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100/80 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1">
+        <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100/80 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 flex flex-col h-full">
             
             {/* Image Container */}
-            <div className="relative h-48 w-full bg-slate-50">
+            <div className="relative h-48 w-full bg-slate-50 shrink-0">
                 {gear.images?.[0] ? (
                     <Image
                         src={gear.images[0]}
@@ -39,7 +58,7 @@ export function MyGearCard({ gear }: { gear: Equipment }) {
             </div>
 
             {/* Content Container */}
-            <div className="flex flex-col p-5">
+            <div className="flex flex-col p-5 grow">
                 <div className="mb-3">
                     <h3 className="text-lg font-bold text-slate-800 line-clamp-1 group-hover:text-[#92a417] transition-colors">{gear.title}</h3>
                     <p className="mt-1 line-clamp-2 text-sm text-slate-500">
@@ -48,8 +67,7 @@ export function MyGearCard({ gear }: { gear: Equipment }) {
                 </div>
 
                 {/* Metrics */}
-                <div className="mt-auto grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
-                    
+                <div className="mt-auto grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 pb-2">
                     <div className="flex items-center gap-2">
                         <div className="rounded-full bg-emerald-50 p-1.5 text-emerald-600">
                             <DollarSign className="h-3.5 w-3.5" />
@@ -69,9 +87,30 @@ export function MyGearCard({ gear }: { gear: Equipment }) {
                             <span className="text-sm font-bold text-slate-700">{gear.availableQuantity}/{gear.quantity}</span>
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            {/* Action Bar (Edit / Delete) */}
+            <div className="grid grid-cols-2 border-t border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-center p-2 border-r border-slate-100">
+                    <PostFormDialog mode="edit" post={gear} />
+                </div>
+                <div className="flex items-center justify-center p-2">
+                    <button 
+                        onClick={handleDelete}
+                        disabled={isPending}
+                        className="flex w-full items-center justify-center gap-2 rounded-md py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 transition-colors"
+                    >
+                        {isPending ? (
+                            <Loader2Icon size={14} className="animate-spin" />
+                        ) : (
+                            <Trash2 size={14} />
+                        )}
+                        Delete
+                    </button>
+                </div>
+            </div>
+
         </div>
     );
 }
