@@ -9,10 +9,10 @@ export function Footer() {
           {/* Brand & About */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-white tracking-tight">
-              Brand<span className="text-[#92a417]">Name</span>
+              Rental<span className="text-[#92a417]">Gear</span>
             </h2>
             <p className="text-sm leading-relaxed text-slate-400">
-              Providing premium services and seamless experiences for all our customers and providers.
+              Your trusted marketplace for renting quality outdoor and sports gear. Connect with verified providers and find the perfect equipment for your next adventure.
             </p>
             <div className="flex space-x-4 pt-2">
               <Link href="#" className="text-slate-400 hover:text-[#92a417] transition-colors flex items-center gap-1 text-sm font-medium">
@@ -62,22 +62,22 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-[#92a417]" />
-                <span>123 Business Avenue, Tech City, 10001</span>
+                <span>Dhaka, Bangladesh</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-[#92a417]" />
-                <span>+1 (555) 123-4567</span>
+                <span>+880 1712-345678</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-[#92a417]" />
-                <span>support@brandname.com</span>
+                <span>support@rentalgear.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
-          <p>&copy; {new Date().getFullYear()} BrandName. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} RentalGear. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -24,20 +24,26 @@ export const getGear = async ({ query }: { query?: { [key: string]: string | str
     }
 
     const queryString = params.toString();
-    const res = await fetch(`${process.env.BACKEND_API_URL}/api/gear${queryString ? `?${queryString}` : ''}`, {
-        headers,
-        ...(query?.searchTerm
-            ? { cache: "no-store" }
-            : {
-                cache: "force-cache",
-                next: {
-                    revalidate: 60 * 60 * 6,
-                    tags: ["premium-posts"]
-                }
-            }
-        )
-    })
 
-    const result = await res.json()
-    return result;
+    try {
+        const res = await fetch(`${process.env.BACKEND_API_URL}/api/gear${queryString ? `?${queryString}` : ''}`, {
+            headers,
+            ...(query?.searchTerm
+                ? { cache: "no-store" }
+                : {
+                    cache: "force-cache",
+                    next: {
+                        revalidate: 60 * 60 * 6,
+                        tags: ["premium-posts"]
+                    }
+                }
+            )
+        });
+
+        const result = await res.json();
+        return result;
+    } catch (error) {
+        console.error("[getGear] Failed to fetch gear:", error);
+        return { success: false, data: [], message: "Failed to connect to the server." };
+    }
 }
