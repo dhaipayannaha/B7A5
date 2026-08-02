@@ -6,7 +6,7 @@ import { Calendar, CreditCard, User } from "lucide-react";
 
 export function MyOrderList({ order }: { order: Order }) {
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100/80 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 p-5 space-y-4">
+        <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100/80 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 py-10 px-10 space-y-4">
 
             {/* Header: Amount and Status */}
             <div className="flex items-start justify-between pb-3 border-b border-slate-100">
