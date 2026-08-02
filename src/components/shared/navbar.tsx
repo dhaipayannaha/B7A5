@@ -26,6 +26,8 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
+import { ThemeToggle } from "../theme-toggle"
+
 // Main navigation links
 const navLinks = [
     { label: "Home", href: "/", icon: LayoutDashboard },
@@ -109,7 +111,7 @@ export function Navbar({ user }: NavbarProps) {
                     <span className="flex size-8 items-center justify-center rounded-md bg-[#92a417] text-sm font-bold text-white shadow-sm">
                         RG
                     </span>
-                    <span className="text-lg font-bold tracking-tight text-[#041334]">
+                    <span className="text-lg font-bold tracking-tight text-[#041334] dark:text-white">
                         Rental Gear
                     </span>
                 </Link>
@@ -133,14 +135,16 @@ export function Navbar({ user }: NavbarProps) {
                     ))}
                 </ul>
 
-                {/* User dropdown */}
-                {
-                    user.success ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                className="relative size-9 rounded-full p-0 bg-transparent border-0 cursor-pointer"
-                                aria-label="Open user menu"
-                            >
+                <div className="flex items-center gap-3">
+                    <ThemeToggle />
+                    {/* User dropdown */}
+                    {
+                        user.success ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger
+                                    className="relative size-9 rounded-full p-0 bg-transparent border-0 cursor-pointer"
+                                    aria-label="Open user menu"
+                                >
                                 <Avatar className="size-9">
                                     <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
                                     <AvatarFallback>JR</AvatarFallback>
@@ -188,6 +192,7 @@ export function Navbar({ user }: NavbarProps) {
                         </Link>
                     )
                 }
+                </div>
             </nav>
         </header>
     )

@@ -22,21 +22,20 @@ export function PaymentSuccessContent() {
             return match ? decodeURIComponent(match[2]) : null;
         };
 
+        // session_id is the Stripe checkout session ID (transactionId for backend)
+        const sessionId = searchParams?.get("session_id");
+
+        // rentalOrderId comes directly from URL param or falls back to cookie
         const rentalOrderId =
             searchParams?.get("rentalOrderId") ||
             getCookie("pendingRentalOrderId");
 
-        // Handle both Stripe (session_id), SSLCommerz (transactionId), or direct-confirm (rentalOrderId) formats
-        // When the backend confirms payment without a Stripe redirect, transactionId === rentalOrderId
-        const transactionId =
-            searchParams?.get("transactionId") ||
-            searchParams?.get("session_id") ||
-            rentalOrderId; // fallback: use rentalOrderId as transactionId if no other ID available
+        // transactionId must be the Stripe session_id — NOT the rentalOrderId
+        const transactionId = sessionId;
 
         // Debug log
-        console.log("[SuccessPage] transactionId:", transactionId);
+        console.log("[SuccessPage] session_id (transactionId):", transactionId);
         console.log("[SuccessPage] rentalOrderId:", rentalOrderId);
-        console.log("[SuccessPage] all cookies:", document.cookie);
         console.log("[SuccessPage] URL params:", window.location.search);
 
         if (!transactionId || !rentalOrderId) {

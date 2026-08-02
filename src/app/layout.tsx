@@ -3,7 +3,7 @@ import { Raleway, IBM_Plex_Sans, Source_Sans_3, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { Toaster } from "sonner";
-
+import { ThemeProvider } from "@/components/theme-provider";
 const sourceSans3Heading = Source_Sans_3({ subsets: ['latin'], variable: '--font-heading' });
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
@@ -24,14 +24,19 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn("h-full antialiased", "font-sans", inter.variable, sourceSans3Heading.variable)}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <Toaster position="top-right" />
-        {/* navbar */}
-        {/* <Navbar /> */}
-        {children}
-        {/* footer */}
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster position="top-right" />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

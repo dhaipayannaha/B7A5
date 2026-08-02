@@ -1,10 +1,11 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { updateOrderStatus } from "../_actions/updateOrderStatus";
 import { toast } from "sonner";
+import { ChevronDown, Loader2 } from "lucide-react";
 
-type OrderStatus = "PLACED" | "CONFIRMED" | "PAID" | "PICKED_UP" | "RETURNED" | "CANCELLED";
+type OrderStatus = "PLACED" | "CONFIRMED" | "PAID" | "PICKED_UP" | "RETURNED" | "CANCELLED" | "REFUNDED";
 
 // ── Badge styles per status ──────────────────────────────────────────────────
 const BADGE_STYLES: Record<OrderStatus, string> = {
@@ -14,6 +15,17 @@ const BADGE_STYLES: Record<OrderStatus, string> = {
     PICKED_UP: "bg-emerald-100 text-emerald-700 border border-emerald-200",
     RETURNED:  "bg-slate-100  text-slate-600  border border-slate-200",
     CANCELLED: "bg-red-100    text-red-700    border border-red-200",
+    REFUNDED:  "bg-purple-100 text-purple-700 border border-purple-200",
+};
+
+const STATUS_ICONS: Record<OrderStatus, string> = {
+    PLACED:    "📋",
+    CONFIRMED: "✔️",
+    PAID:      "💳",
+    PICKED_UP: "📦",
+    RETURNED:  "↩️",
+    CANCELLED: "❌",
+    REFUNDED:  "💸",
 };
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
@@ -23,14 +35,10 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
     PICKED_UP: "Picked Up",
     RETURNED:  "Returned",
     CANCELLED: "Cancelled",
+    REFUNDED:  "Refunded",
 };
 
-// ── What action (button label + next status) the PROVIDER can take ───────────
-const PROVIDER_ACTIONS: Partial<Record<OrderStatus, { label: string; nextStatus: OrderStatus; color: string }>> = {
-    PLACED:    { label: "✓ Confirm Order",    nextStatus: "CONFIRMED", color: "bg-blue-600 hover:bg-blue-700 text-white" },
-    PAID:      { label: "📦 Mark Picked Up",  nextStatus: "PICKED_UP", color: "bg-emerald-600 hover:bg-emerald-700 text-white" },
-    PICKED_UP: { label: "↩ Mark Returned",    nextStatus: "RETURNED",  color: "bg-slate-600 hover:bg-slate-700 text-white" },
-};
+const ALL_STATUSES: OrderStatus[] = ["PLACED", "CONFIRMED", "PAID", "PICKED_UP", "RETURNED", "CANCELLED", "REFUNDED"];
 
 export function OrderStatusSelect({
     orderId,
@@ -40,39 +48,98 @@ export function OrderStatusSelect({
     currentStatus: string;
 }) {
     const [isPending, startTransition] = useTransition();
-    const status = currentStatus as OrderStatus;
+    const [isOpen, setIsOpen] = useState(false);
 
-    const providerAction = PROVIDER_ACTIONS[status];
-    const badgeStyle = BADGE_STYLES[status] ?? "bg-slate-100 text-slate-600 border border-slate-200";
-    const label = STATUS_LABELS[status] ?? status;
+    const status = (currentStatus as OrderStatus) in BADGE_STYLES
+        ? (currentStatus as OrderStatus)
+        : "PLACED";
 
-    const advance = (nextStatus: OrderStatus) => {
+    const badgeStyle = BADGE_STYLES[status];
+    const label = STATUS_LABELS[status];
+
+    const handleSelect = (nextStatus: OrderStatus) => {
+        if (nextStatus === status) {
+            setIsOpen(false);
+            return;
+        }
+        setIsOpen(false);
         startTransition(async () => {
-            const result = await updateOrderStatus(orderId, nextStatus);
+            let result;
+            if (nextStatus === "REFUNDED") {
+                result = await updateOrderStatus(orderId, undefined, "REFUNDED");
+            } else {
+                result = await updateOrderStatus(orderId, nextStatus);
+            }
             if (!result.success) {
                 toast.error(result.message ?? "Failed to update order status", { position: "top-right" });
             } else {
-                toast.success(`Order status updated to ${STATUS_LABELS[nextStatus] ?? nextStatus}`, { position: "top-right" });
+                toast.success(
+                    `Status updated to ${STATUS_ICONS[nextStatus]} ${STATUS_LABELS[nextStatus]}`,
+                    { position: "top-right" }
+                );
             }
         });
     };
 
     return (
-        <div className="flex flex-col items-start gap-2">
-            {/* Status badge */}
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${badgeStyle}`}>
-                {label}
-            </span>
+        <div className="relative">
+            {/* Trigger button */}
+            <button
+                onClick={() => setIsOpen((prev) => !prev)}
+                disabled={isPending}
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-60 disabled:cursor-not-allowed ${badgeStyle}`}
+            >
+                {isPending ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                    <span>{STATUS_ICONS[status]}</span>
+                )}
+                <span>{label}</span>
+                {!isPending && (
+                    <ChevronDown
+                        className={`h-3 w-3 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                    />
+                )}
+            </button>
 
-            {/* Action button — only shown when provider can act */}
-            {providerAction && (
-                <button
-                    onClick={() => advance(providerAction.nextStatus)}
-                    disabled={isPending}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${providerAction.color}`}
-                >
-                    {isPending ? "Updating…" : providerAction.label}
-                </button>
+            {/* Dropdown */}
+            {isOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setIsOpen(false)}
+                    />
+
+                    {/* Options */}
+                    <div className="absolute right-0 z-20 mt-1.5 min-w-[180px] overflow-hidden rounded-xl border border-slate-100 bg-white shadow-lg shadow-slate-200/60 ring-1 ring-black/5">
+                        <div className="py-1">
+                            {ALL_STATUSES.map((s) => (
+                                <button
+                                    key={s}
+                                    onClick={() => handleSelect(s)}
+                                    className={`flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-slate-50 ${
+                                        s === status ? "cursor-default" : "cursor-pointer"
+                                    }`}
+                                >
+                                    <span
+                                        className={`inline-flex w-full whitespace-nowrap items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_STYLES[s]} ${
+                                            s === status ? "opacity-50" : ""
+                                        }`}
+                                    >
+                                        <span className="mr-1.5">{STATUS_ICONS[s]}</span>
+                                        {STATUS_LABELS[s]}
+                                        {s === status && (
+                                            <span className="ml-auto text-[9px] font-normal normal-case tracking-normal opacity-70">
+                                                current
+                                            </span>
+                                        )}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
             )}
         </div>
     );

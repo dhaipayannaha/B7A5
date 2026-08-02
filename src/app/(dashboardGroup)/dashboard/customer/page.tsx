@@ -193,7 +193,7 @@ export default async function CustomerDashboardPage() {
                                         <th className="text-right px-5 py-3.5 font-semibold text-[#041334] text-xs uppercase tracking-wide">
                                             Amount
                                         </th>
-                                        <th className="text-center px-5 py-3.5 font-semibold text-[#041334] text-xs uppercase tracking-wide">
+                                        <th className="text-right px-5 py-3.5 font-semibold text-[#041334] text-xs uppercase tracking-wide">
                                             Action
                                         </th>
                                     </tr>
@@ -244,21 +244,12 @@ export default async function CustomerDashboardPage() {
                                                     </span>
                                                 </td>
 
-                                                {/* Context action per status */}
-                                                <td className="px-5 py-4 text-center">
-                                                    {status === "CONFIRMED" && (
-                                                        <Link
-                                                            href={`/payment?rentalOrderId=${rental.id}`}
-                                                            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-3 py-1.5 transition"
-                                                        >
-                                                            <CreditCardIcon size={12} /> Pay Now
-                                                        </Link>
-                                                    )}
-                                                    {status === "RETURNED" && (
-                                                        <ReviewDialog rentalOrderId={rental.id} gearItemId={rental.gearItem?.id || rental.gearItemId} />
-                                                    )}
-                                                    {!["CONFIRMED", "RETURNED"].includes(status) && (
-                                                        <span className="text-xs text-muted-foreground">—</span>
+                                                {/* Action */}
+                                                <td className="px-5 py-4 text-right">
+                                                    {(status?.toUpperCase() === "RETURNED" || rental.paymentStatus?.toUpperCase() === "REFUNDED") ? (
+                                                        <ReviewDialog gearItemId={rental.gearItemId} rentalOrderId={rental.id} />
+                                                    ) : (
+                                                        <span className="text-xs text-slate-400">—</span>
                                                     )}
                                                 </td>
                                             </tr>

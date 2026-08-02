@@ -27,6 +27,18 @@ interface Category {
     updatedAt: string;
 }
 
+export interface Review {
+    id: string;
+    rating: number;
+    comment: string | null;
+    customerId: string;
+    gearItemId: string;
+    rentalOrderId: string;
+    createdAt: string;
+    updatedAt: string;
+    customer: Provider; // Provider interface matches user data we select (id, name, etc.)
+}
+
 export interface Equipment {
     author: any;
     content: ReactNode;
@@ -49,6 +61,7 @@ export interface Equipment {
     updatedAt: string;
     provider: Provider;
     category: Category;
+    reviews?: Review[];
 }
 
 

@@ -54,6 +54,7 @@ export function ReviewDialog({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
+            {/* @ts-expect-error asChild type issue with Radix UI and React 19 */}
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1 bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 h-8 text-xs px-3 rounded-lg">
                     <StarIcon size={12} className="fill-yellow-500 text-yellow-500" />
