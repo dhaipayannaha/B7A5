@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
     Dialog,
     DialogContent,
@@ -24,6 +25,7 @@ interface RentNowDialogProps {
 }
 
 export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity }: RentNowDialogProps) {
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -74,17 +76,23 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
                     const paymentUrl = result.url || result.payment_url || result.data?.url || result.data?.payment_url || (typeof result.data === 'string' ? result.data : null);
                     
                     if (typeof paymentUrl === "string" && paymentUrl.startsWith("http")) {
-                        // 💾 Save rentalOrderId so the success page can use it
-                        if (result.rentalOrderId) {
-                            sessionStorage.setItem("pendingRentalOrderId", result.rentalOrderId);
-                        }
-                        // Redirect to Stripe Checkout
+                        // ✅ rentalOrderId is already saved to a cookie by handlePayment (server-side)
+                        // sessionStorage would be lost after Stripe redirects back, so we rely on the cookie
                         toast.loading("Redirecting to Stripe Checkout...");
                         window.location.href = paymentUrl;
                         return;
                     }
 
-                    // Fallback if no URL is found but success is true
+                    // No Stripe redirect URL — backend confirmed payment directly.
+                    // Navigate to the success page with the rentalOrderId as transactionId.
+                    const confirmedOrderId = result.rentalOrderId || result.data?.rentalOrderId || result.data?._id || result.data?.id;
+                    if (confirmedOrderId) {
+                        toast.loading("Payment confirmed! Loading confirmation page...");
+                        router.push(`/payment/success?transactionId=${encodeURIComponent(confirmedOrderId)}`);
+                        return;
+                    }
+
+                    // Last-resort fallback
                     toast.success("Rental booked successfully! Check your dashboard.", {
                         position: "top-right",
                     });

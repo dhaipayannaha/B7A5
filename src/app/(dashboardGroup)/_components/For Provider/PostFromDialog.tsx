@@ -185,124 +185,136 @@ export function PostFormDialog({ mode, post }: PostFormDialogProps) {
                         </FormField>
 
                         {/* ── Gear Details ── */}
-                        <SectionHeading>Gear Details</SectionHeading>
+                        {!isEdit && (
+                            <>
+                                <SectionHeading>Gear Details</SectionHeading>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField label="Brand" icon={WrenchIcon}>
-                                <Input
-                                    name="brand"
-                                    defaultValue={post?.brand}
-                                    placeholder="e.g. Sony, DJI, Canon"
-                                    required
-                                />
-                            </FormField>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FormField label="Brand" icon={WrenchIcon}>
+                                        <Input
+                                            name="brand"
+                                            defaultValue={post?.brand}
+                                            placeholder="e.g. Sony, DJI, Canon"
+                                            required
+                                        />
+                                    </FormField>
 
-                            <FormField label="Model" icon={PackageIcon}>
-                                <Input
-                                    name="model"
-                                    defaultValue={post?.model}
-                                    placeholder="e.g. A7 III"
-                                    required
-                                />
-                            </FormField>
+                                    <FormField label="Model" icon={PackageIcon}>
+                                        <Input
+                                            name="model"
+                                            defaultValue={post?.model}
+                                            placeholder="e.g. A7 III"
+                                            required
+                                        />
+                                    </FormField>
 
-                            <FormField label="Category" icon={HashIcon}>
-                                <select
-                                    name="categoryName"
-                                    defaultValue={post?.category?.name ?? ""}
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
-                                    required
-                                >
-                                    <option value="" disabled>Select a category</option>
-                                    <option value="Cycling">🚴 Cycling</option>
-                                    <option value="Camping">⛺ Camping</option>
-                                    <option value="Fitness">💪 Fitness</option>
-                                    <option value="Water Sports">🏄 Water Sports</option>
-                                    <option value="Hiking">🥾 Hiking</option>
-                                    <option value="Winter Sports">⛷️ Winter Sports</option>
-                                    <option value="Team Sports">⚽ Team Sports</option>
-                                    <option value="Photography & Film">📷 Photography &amp; Film</option>
-                                </select>
-                            </FormField>
+                                    <FormField label="Category" icon={HashIcon}>
+                                        <select
+                                            name="categoryName"
+                                            defaultValue={post?.category?.name ?? ""}
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                                            required
+                                        >
+                                            <option value="" disabled>Select a category</option>
+                                            <option value="Cycling">🚴 Cycling</option>
+                                            <option value="Camping">⛺ Camping</option>
+                                            <option value="Fitness">💪 Fitness</option>
+                                            <option value="Water Sports">🏄 Water Sports</option>
+                                            <option value="Hiking">🥾 Hiking</option>
+                                            <option value="Winter Sports">⛷️ Winter Sports</option>
+                                            <option value="Team Sports">⚽ Team Sports</option>
+                                            <option value="Photography & Film">📷 Photography &amp; Film</option>
+                                        </select>
+                                    </FormField>
 
-                            <FormField label="Condition">
-                                <select
-                                    name="condition"
-                                    defaultValue={post?.condition ?? ""}
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
-                                    required
-                                >
-                                    <option value="" disabled>Select condition</option>
-                                    <option value="NEW">🌟 New</option>
-                                    <option value="EXCELLENT">✨ Excellent</option>
-                                    <option value="GOOD">👍 Good</option>
-                                    <option value="FAIR">🔧 Fair</option>
-                                </select>
-                            </FormField>
-                        </div>
+                                    <FormField label="Condition">
+                                        <select
+                                            name="condition"
+                                            defaultValue={post?.condition ?? ""}
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                                            required
+                                        >
+                                            <option value="" disabled>Select condition</option>
+                                            <option value="NEW">🌟 New</option>
+                                            <option value="EXCELLENT">✨ Excellent</option>
+                                            <option value="GOOD">👍 Good</option>
+                                            <option value="FAIR">🔧 Fair</option>
+                                        </select>
+                                    </FormField>
+                                </div>
+                            </>
+                        )}
 
                         {/* ── Pricing & Stock ── */}
-                        <SectionHeading>Pricing &amp; Stock</SectionHeading>
+                        {!isEdit && (
+                            <>
+                                <SectionHeading>Pricing &amp; Stock</SectionHeading>
 
-                        <div className="grid grid-cols-3 gap-4">
-                            <FormField label="Daily Rate (৳)" icon={DollarSignIcon}>
-                                <Input
-                                    name="dailyRate"
-                                    type="number"
-                                    min={0}
-                                    step={0.01}
-                                    defaultValue={post?.dailyRate}
-                                    placeholder="0.00"
-                                    required
-                                />
-                            </FormField>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <FormField label="Daily Rate (৳)" icon={DollarSignIcon}>
+                                        <Input
+                                            name="dailyRate"
+                                            type="number"
+                                            min={0}
+                                            step={0.01}
+                                            defaultValue={post?.dailyRate}
+                                            placeholder="0.00"
+                                            required
+                                        />
+                                    </FormField>
 
-                            <FormField label="Total Quantity" icon={PackageIcon}>
-                                <Input
-                                    name="quantity"
-                                    type="number"
-                                    min={1}
-                                    defaultValue={post?.quantity}
-                                    placeholder="e.g. 10"
-                                    required
-                                />
-                            </FormField>
+                                    <FormField label="Total Quantity" icon={PackageIcon}>
+                                        <Input
+                                            name="quantity"
+                                            type="number"
+                                            min={1}
+                                            defaultValue={post?.quantity}
+                                            placeholder="e.g. 10"
+                                            required
+                                        />
+                                    </FormField>
 
-                            <FormField label="Available Qty" icon={PackageIcon}>
-                                <Input
-                                    name="availableQuantity"
-                                    type="number"
-                                    min={0}
-                                    defaultValue={post?.availableQuantity}
-                                    placeholder="e.g. 10"
-                                    required
-                                />
-                            </FormField>
-                        </div>
+                                    <FormField label="Available Qty" icon={PackageIcon}>
+                                        <Input
+                                            name="availableQuantity"
+                                            type="number"
+                                            min={0}
+                                            defaultValue={post?.availableQuantity}
+                                            placeholder="e.g. 10"
+                                            required
+                                        />
+                                    </FormField>
+                                </div>
+                            </>
+                        )}
 
                         {/* ── Visibility & Images ── */}
-                        <SectionHeading>Visibility &amp; Images</SectionHeading>
+                        {!isEdit && (
+                            <>
+                                <SectionHeading>Visibility &amp; Images</SectionHeading>
 
-                        <FormField label="Status">
-                            <select
-                                name="status"
-                                defaultValue={post?.status ?? "AVAILABLE"}
-                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
-                            >
-                                <option value="AVAILABLE">🟢 Available</option>
-                                <option value="UNAVAILABLE">🔴 Unavailable</option>
-                                <option value="MAINTENANCE">🔧 Maintenance</option>
-                            </select>
-                        </FormField>
+                                <FormField label="Status">
+                                    <select
+                                        name="status"
+                                        defaultValue={post?.status ?? "AVAILABLE"}
+                                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                                    >
+                                        <option value="AVAILABLE">🟢 Available</option>
+                                        <option value="UNAVAILABLE">🔴 Unavailable</option>
+                                        <option value="MAINTENANCE">🔧 Maintenance</option>
+                                    </select>
+                                </FormField>
 
-                        <FormField label="Image URLs (one per line)" icon={ImageIcon}>
-                            <Textarea
-                                name="images"
-                                defaultValue={post?.images?.join("\n")}
-                                placeholder={"https://example.com/image1.jpg\nhttps://example.com/image2.jpg"}
-                                className="min-h-20 resize-none font-mono text-xs"
-                            />
-                        </FormField>
+                                <FormField label="Image URLs (one per line)" icon={ImageIcon}>
+                                    <Textarea
+                                        name="images"
+                                        defaultValue={post?.images?.join("\n")}
+                                        placeholder={"https://example.com/image1.jpg\nhttps://example.com/image2.jpg"}
+                                        className="min-h-20 resize-none font-mono text-xs"
+                                    />
+                                </FormField>
+                            </>
+                        )}
                     </div>
 
                     {/* ── Footer ── */}

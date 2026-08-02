@@ -1,9 +1,8 @@
-import React from 'react'
 import { Loader2 } from "lucide-react";
 
-export default function GlobalLoading() {
+export default function DashboardLoading() {
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-center space-y-8 bg-background">
+        <div className="flex h-[80vh] w-full flex-col items-center justify-center space-y-8 bg-background">
             <div className="relative flex items-center justify-center">
                 {/* Outer spinning ring with brand color */}
                 <div className="absolute h-24 w-24 rounded-full border-[3px] border-[#92a417]/20 border-t-[#92a417] animate-spin shadow-lg shadow-[#92a417]/10" />
@@ -16,10 +15,10 @@ export default function GlobalLoading() {
             
             <div className="flex flex-col items-center space-y-2">
                 <h3 className="text-xl font-bold tracking-tight text-foreground">
-                    Rental Gear
+                    Preparing Workspace
                 </h3>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <span className="animate-pulse delay-75">Loading content</span>
+                    <span className="animate-pulse delay-75">Fetching data</span>
                     <span className="flex gap-0.5">
                         <span className="animate-bounce delay-100">.</span>
                         <span className="animate-bounce delay-200">.</span>

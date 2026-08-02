@@ -3,13 +3,10 @@
 import Link from "next/link"
 import {
     LayoutDashboard,
-    FolderKanban,
-    BarChart3,
-    Settings,
     User,
-    CreditCard,
-    LifeBuoy,
+    Settings,
     LogOut,
+    PackageSearch,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -29,21 +26,15 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-// Main navigation links — keep everything in one array for easy edits.
+// Main navigation links
 const navLinks = [
     { label: "Home", href: "/", icon: LayoutDashboard },
-    { label: "About", href: "/projects", icon: FolderKanban },
-    { label: "Services", href: "/analytics", icon: BarChart3 },
-    { label: "Contace", href: "/contact", icon: Settings },
-    { label: "Gear", href: "/gear", icon: Settings },
-    { label: "Premium", href: "/premium", icon: Settings },
+    { label: "Browse Gear", href: "/gear", icon: PackageSearch },
 ]
 
 // User dropdown options — an array so options are simple to add/remove.
 const userMenuItems = [
-    { label: "Profile", action: "profile", icon: User },
     { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
-    { label: "Settings", action: "settings", icon: Settings }
 ]
 
 const currentUser = {
@@ -114,22 +105,26 @@ export function Navbar({ user }: NavbarProps) {
         <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
             <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <span className="flex size-8 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-                        A
+                <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+                    <span className="flex size-8 items-center justify-center rounded-md bg-[#92a417] text-sm font-bold text-white shadow-sm">
+                        RG
                     </span>
-                    <span className="text-lg font-semibold tracking-tight text-foreground">
-                        Acme Inc
+                    <span className="text-lg font-bold tracking-tight text-[#041334]">
+                        Rental Gear
                     </span>
                 </Link>
 
                 {/* Nav links */}
-                <ul className="hidden items-center gap-1 md:flex">
+                <ul className="hidden items-center gap-2 md:flex">
                     {navLinks.map((link) => (
                         <li key={link.label}>
                             <Link
                                 href={link.href}
-                                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                                className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                                    link.href === "/gear"
+                                        ? "bg-[#92a417]/10 text-[#92a417] hover:bg-[#92a417]/20"
+                                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                }`}
                             >
                                 <link.icon className="size-4" />
                                 {link.label}

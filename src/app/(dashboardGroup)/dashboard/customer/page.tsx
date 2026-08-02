@@ -13,6 +13,7 @@ import {
     ShoppingBagIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { ReviewDialog } from "./_components/ReviewDialog";
 
 // ── Status badge config ──────────────────────────────────────────────────────
 type RentalStatus =
@@ -254,12 +255,7 @@ export default async function CustomerDashboardPage() {
                                                         </Link>
                                                     )}
                                                     {status === "RETURNED" && (
-                                                        <Link
-                                                            href={`/dashboard/customer/orders/${rental.id}`}
-                                                            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg px-3 py-1.5 transition"
-                                                        >
-                                                            ★ Leave Review
-                                                        </Link>
+                                                        <ReviewDialog rentalOrderId={rental.id} gearItemId={rental.gearItem?.id || rental.gearItemId} />
                                                     )}
                                                     {!["CONFIRMED", "RETURNED"].includes(status) && (
                                                         <span className="text-xs text-muted-foreground">—</span>

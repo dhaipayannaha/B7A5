@@ -63,28 +63,31 @@ export const createPost = async (prevState: PostState | null, formData: FormData
 
 export const updatePost = async (postId: string, prevState: PostState | null, formData: FormData) => {
 
-    const quantity = Number(formData.get("quantity"));
-    const availableQuantity = Number(formData.get("availableQuantity")) || quantity;
+    const payload: Record<string, any> = {};
 
-    const imagesRaw = (formData.get("images") as string) ?? "";
-    const images = imagesRaw
-        .split(/[\n,]/)
-        .map((s) => s.trim())
-        .filter(Boolean);
+    if (formData.has("title")) payload.title = formData.get("title");
+    if (formData.has("description")) payload.description = formData.get("description");
+    if (formData.has("brand")) payload.brand = formData.get("brand");
+    if (formData.has("model")) payload.model = formData.get("model");
+    if (formData.has("dailyRate")) payload.dailyRate = Number(formData.get("dailyRate"));
+    if (formData.has("quantity")) payload.quantity = Number(formData.get("quantity"));
+    if (formData.has("availableQuantity")) {
+        payload.availableQuantity = Number(formData.get("availableQuantity"));
+    } else if (formData.has("quantity")) {
+        payload.availableQuantity = Number(formData.get("quantity"));
+    }
+    
+    if (formData.has("condition")) payload.condition = formData.get("condition");
+    if (formData.has("status")) payload.status = formData.get("status");
+    if (formData.has("categoryName")) payload.categoryName = formData.get("categoryName");
 
-    const payload = {
-        title: formData.get("title"),
-        description: formData.get("description"),
-        brand: formData.get("brand"),
-        model: formData.get("model"),
-        dailyRate: Number(formData.get("dailyRate")),
-        quantity,
-        availableQuantity,
-        images,
-        condition: formData.get("condition"),
-        status: formData.get("status"),
-        categoryName: formData.get("categoryName"),
-    };
+    if (formData.has("images")) {
+        const imagesRaw = (formData.get("images") as string) ?? "";
+        payload.images = imagesRaw
+            .split(/[\n,]/)
+            .map((s) => s.trim())
+            .filter(Boolean);
+    }
 
     console.log("[updatePost] postId:", postId);
     console.log("[updatePost] payload:", JSON.stringify(payload, null, 2));

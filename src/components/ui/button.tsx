@@ -42,8 +42,10 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  asChild: _asChild, // Base UI does not support asChild — strip it to prevent DOM warning
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
   return (
     <ButtonPrimitive
       data-slot="button"

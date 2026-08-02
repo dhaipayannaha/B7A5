@@ -34,13 +34,13 @@ const LoginFrom = () => {
 
     return (
         <form action={action} className='space-y-4'>
-            <Card className="p-5 space-y-4">
-                <Input name="email" type='email' placeholder='Email' required />
-                <Input name="password" type='password' placeholder='Password' required />
-                <Button type="submit" className="w-full" disabled={pending}>
-                    {pending ? "Logging in..." : "Login"}
+            <div className="space-y-4">
+                <Input name="email" type='email' placeholder='Email Address' required className="h-12" />
+                <Input name="password" type='password' placeholder='Password' required className="h-12" />
+                <Button type="submit" className="w-full h-12 bg-[#92a417] hover:bg-[#829214] text-white text-base font-semibold transition-all shadow-md hover:shadow-lg" disabled={pending}>
+                    {pending ? "Logging in..." : "Log in"}
                 </Button>
-            </Card>
+            </div>
         </form>
     )
 }

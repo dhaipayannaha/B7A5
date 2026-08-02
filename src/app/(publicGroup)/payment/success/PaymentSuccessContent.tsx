@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { confirmPaymentAction } from "../../_actions/confirmPayment";
 import { CheckCircleIcon, XCircleIcon, Loader2Icon } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
 import { toast } from "sonner";
 
 export function PaymentSuccessContent() {
@@ -15,9 +16,6 @@ export function PaymentSuccessContent() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        // Handle both Stripe (session_id) and SSLCommerz (transactionId) formats
-        const transactionId = searchParams?.get("transactionId") || searchParams?.get("session_id");
-
         // Read rentalOrderId from cookie (more reliable than sessionStorage across Stripe redirect)
         const getCookie = (name: string) => {
             const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
@@ -28,6 +26,13 @@ export function PaymentSuccessContent() {
             searchParams?.get("rentalOrderId") ||
             getCookie("pendingRentalOrderId");
 
+        // Handle both Stripe (session_id), SSLCommerz (transactionId), or direct-confirm (rentalOrderId) formats
+        // When the backend confirms payment without a Stripe redirect, transactionId === rentalOrderId
+        const transactionId =
+            searchParams?.get("transactionId") ||
+            searchParams?.get("session_id") ||
+            rentalOrderId; // fallback: use rentalOrderId as transactionId if no other ID available
+
         // Debug log
         console.log("[SuccessPage] transactionId:", transactionId);
         console.log("[SuccessPage] rentalOrderId:", rentalOrderId);
@@ -36,9 +41,10 @@ export function PaymentSuccessContent() {
 
         if (!transactionId || !rentalOrderId) {
             setStatus("error");
-            setMessage(`Missing IDs — transactionId: ${transactionId ?? "MISSING"}, rentalOrderId: ${rentalOrderId ?? "MISSING"}`);
+            setMessage("We could not verify your payment details. Please check your dashboard or contact support.");
             return;
         }
+
 
         // Clear the cookie now that we've read it
         document.cookie = "pendingRentalOrderId=; max-age=0; path=/";
@@ -97,12 +103,12 @@ export function PaymentSuccessContent() {
                     <p className="text-muted-foreground text-sm">{message}</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/customer">Go to Dashboard</Link>
-                    </Button>
-                    <Button asChild className="bg-[#92a417] hover:bg-[#829214] text-white">
-                        <Link href="/gear">Browse Gear</Link>
-                    </Button>
+                    <Link href="/dashboard/customer" className={buttonVariants({ variant: "outline" })}>
+                        Go to Dashboard
+                    </Link>
+                    <Link href="/gear" className={buttonVariants({ variant: "default" }) + " bg-[#92a417] hover:bg-[#829214] text-white"}>
+                        Browse Gear
+                    </Link>
                 </div>
             </div>
         );

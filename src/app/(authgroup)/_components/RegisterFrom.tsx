@@ -21,7 +21,7 @@ const RegisterFrom = () => {
 
         if (state.success) {
             toast.success(state.message || "Registration success");
-            // router.push("/login");
+            router.push(`/login${redirectTo ? `?redirectTo=${redirectTo}` : ''}`);
         }
 
         if (!state.success) {
@@ -35,16 +35,16 @@ const RegisterFrom = () => {
 
 
 
-            <Card className="p-5 space-y-4">
-                <Input name="name" type='text' placeholder='Name' required />
-                <Input name="email" type='email' placeholder='Email' required />
-                <Input name="password" type='password' placeholder='Password' required />
-                <Input name="phone" type='text' placeholder='Phone' required />
-                <Input name="image" type='text' placeholder='Image Url' required />
-                <Button type="submit" className="w-full" disabled={pending}>
-                    {pending ? "Logging in..." : "Login"}
+            <div className="space-y-4">
+                <Input name="name" type='text' placeholder='Full Name' required className="h-12" />
+                <Input name="email" type='email' placeholder='Email Address' required className="h-12" />
+                <Input name="password" type='password' placeholder='Password' required className="h-12" />
+                <Input name="phone" type='text' placeholder='Phone Number' required className="h-12" />
+                <Input name="image" type='text' placeholder='Profile Image URL' required className="h-12" />
+                <Button type="submit" className="w-full h-12 bg-[#92a417] hover:bg-[#829214] text-white text-base font-semibold transition-all shadow-md hover:shadow-lg" disabled={pending}>
+                    {pending ? "Creating account..." : "Create Account"}
                 </Button>
-            </Card>
+            </div>
         </form>
     )
 }

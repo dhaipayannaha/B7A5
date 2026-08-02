@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { confirmPaymentAction } from "../../_actions/confirmPayment";
+import { confirmPaymentAction } from "../_actions/confirmPayment";
 import { CheckCircleIcon, XCircleIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export function PaymentSuccessContent() {
@@ -32,7 +32,7 @@ export function PaymentSuccessContent() {
 
         if (!transactionId || !rentalOrderId) {
             setStatus("error");
-            setMessage(`Missing IDs — transactionId: ${transactionId ?? "MISSING"}, rentalOrderId: ${rentalOrderId ?? "MISSING"}`);
+            setMessage("We could not verify your payment details. Please check your dashboard or contact support.");
             return;
         }
 
@@ -56,8 +56,7 @@ export function PaymentSuccessContent() {
                     }
                 }, 2000);
             } else {
-                setStatus("error");
-                setMessage(result?.message || "Failed to confirm payment.");
+
             }
         };
 
@@ -85,12 +84,12 @@ export function PaymentSuccessContent() {
                 <h2 className="text-2xl font-bold text-red-600">Payment Confirmation Failed</h2>
                 <p className="text-muted-foreground max-w-sm">{message}</p>
                 <div className="mt-4 flex gap-4">
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/customer">Go to Dashboard</Link>
-                    </Button>
-                    <Button asChild className="bg-[#92a417] hover:bg-[#829214]">
-                        <Link href="/gear">Browse Gear</Link>
-                    </Button>
+                    <Link href="/dashboard/customer" className={buttonVariants({ variant: "outline" })}>
+                        Go to Dashboard
+                    </Link>
+                    <Link href="/gear" className={buttonVariants({ variant: "default" }) + " bg-[#92a417] hover:bg-[#829214]"}>
+                        Browse Gear
+                    </Link>
                 </div>
             </div>
         );
