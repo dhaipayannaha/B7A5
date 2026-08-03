@@ -24,18 +24,18 @@ import {
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 const CONDITION_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-    NEW:       { label: "New",       color: "bg-emerald-100 text-emerald-700 border-emerald-200", icon: "🌟" },
-    EXCELLENT: { label: "Excellent", color: "bg-blue-100   text-blue-700   border-blue-200",      icon: "✨" },
-    GOOD:      { label: "Good",      color: "bg-amber-100  text-amber-700  border-amber-200",      icon: "👍" },
-    FAIR:      { label: "Fair",      color: "bg-orange-100 text-orange-700 border-orange-200",     icon: "🔧" },
-    POOR:      { label: "Poor",      color: "bg-red-100    text-red-700    border-red-200",        icon: "⚠️" },
+    NEW: { label: "New", color: "bg-emerald-100 text-emerald-700 border-emerald-200", icon: "🌟" },
+    EXCELLENT: { label: "Excellent", color: "bg-blue-100   text-blue-700   border-blue-200", icon: "✨" },
+    GOOD: { label: "Good", color: "bg-amber-100  text-amber-700  border-amber-200", icon: "👍" },
+    FAIR: { label: "Fair", color: "bg-orange-100 text-orange-700 border-orange-200", icon: "🔧" },
+    POOR: { label: "Poor", color: "bg-red-100    text-red-700    border-red-200", icon: "⚠️" },
 };
 
 const STATUS_CONFIG: Record<string, { label: string; dot: string }> = {
-    AVAILABLE:   { label: "Available",   dot: "bg-emerald-500" },
-    UNAVAILABLE: { label: "Unavailable", dot: "bg-red-500"     },
-    RENTED:      { label: "Rented",      dot: "bg-amber-500"   },
-    MAINTENANCE: { label: "Maintenance", dot: "bg-slate-400"   },
+    AVAILABLE: { label: "Available", dot: "bg-emerald-500" },
+    UNAVAILABLE: { label: "Unavailable", dot: "bg-red-500" },
+    RENTED: { label: "Rented", dot: "bg-amber-500" },
+    MAINTENANCE: { label: "Maintenance", dot: "bg-slate-400" },
 };
 
 function StatCard({ icon: Icon, label, value, accent = false }: {
@@ -45,11 +45,10 @@ function StatCard({ icon: Icon, label, value, accent = false }: {
     accent?: boolean;
 }) {
     return (
-        <div className={`flex flex-col items-center gap-1 rounded-2xl p-4 border transition-all ${
-            accent
+        <div className={`flex flex-col items-center gap-1 rounded-2xl p-4 border transition-all ${accent
                 ? "bg-[#92a417]/8 border-[#92a417]/20 text-[#92a417]"
                 : "bg-slate-50 border-slate-100 text-slate-600"
-        }`}>
+            }`}>
             <Icon className="h-5 w-5 mb-0.5" />
             <span className={`text-xl font-bold ${accent ? "text-[#92a417]" : "text-[#041334]"}`}>{value}</span>
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
@@ -179,12 +178,12 @@ export default async function GearByIdPage({ params }: { params: Promise<{ id: s
                             </div>
                             <dl className="grid grid-cols-2 gap-y-4 gap-x-8 sm:grid-cols-3">
                                 {[
-                                    { label: "Brand",    value: gear.brand,          icon: TagIcon },
-                                    { label: "Model",    value: gear.model,          icon: BoxIcon },
+                                    { label: "Brand", value: gear.brand, icon: TagIcon },
+                                    { label: "Model", value: gear.model, icon: BoxIcon },
                                     { label: "Category", value: gear.category?.name, icon: LayersIcon },
-                                    { label: "Condition",value: condition.label,     icon: SparklesIcon },
-                                    { label: "Status",   value: statusInfo.label,    icon: ZapIcon },
-                                    { label: "Listed",   value: new Date(gear.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), icon: CalendarIcon },
+                                    { label: "Condition", value: condition.label, icon: SparklesIcon },
+                                    { label: "Status", value: statusInfo.label, icon: ZapIcon },
+                                    { label: "Listed", value: new Date(gear.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), icon: CalendarIcon },
                                 ].map(({ label, value, icon: Icon }) => (
                                     <div key={label} className="flex items-start gap-3">
                                         <div className="mt-0.5 flex-shrink-0 p-1.5 rounded-lg bg-slate-50 text-slate-500">
@@ -338,17 +337,16 @@ export default async function GearByIdPage({ params }: { params: Promise<{ id: s
 
                             {/* Stats */}
                             <div className="grid grid-cols-3 gap-3">
-                                <StatCard icon={PackageIcon}  label="Total Qty"  value={String(gear.quantity)} />
+                                <StatCard icon={PackageIcon} label="Total Qty" value={String(gear.quantity)} />
                                 <StatCard icon={ShieldCheckIcon} label="Available" value={String(gear.availableQuantity)} accent />
-                                <StatCard icon={StarIcon}     label="Condition" value={condition.icon} />
+                                <StatCard icon={StarIcon} label="Condition" value={condition.icon} />
                             </div>
 
                             {/* Availability indicator */}
-                            <div className={`flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold border ${
-                                isAvailable
+                            <div className={`flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold border ${isAvailable
                                     ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                                     : "bg-red-50 border-red-200 text-red-700"
-                            }`}>
+                                }`}>
                                 <span className={`h-2.5 w-2.5 flex-shrink-0 rounded-full ${isAvailable ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
                                 {isAvailable
                                     ? `${gear.availableQuantity} unit${gear.availableQuantity !== 1 ? "s" : ""} ready to rent`
@@ -374,9 +372,9 @@ export default async function GearByIdPage({ params }: { params: Promise<{ id: s
                             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 text-center">Why Rent With Us</p>
                             <div className="space-y-3">
                                 {[
-                                    { icon: ShieldCheckIcon, title: "Verified Providers",  desc: "All gear providers are identity-verified" },
-                                    { icon: BadgeCheckIcon,  title: "Quality Guaranteed",   desc: "Gear is inspected before every rental" },
-                                    { icon: ZapIcon,         title: "Fast Confirmation",    desc: "Get a response within 24 hours" },
+                                    { icon: ShieldCheckIcon, title: "Verified Providers", desc: "All gear providers are identity-verified" },
+                                    { icon: BadgeCheckIcon, title: "Quality Guaranteed", desc: "Gear is inspected before every rental" },
+                                    { icon: ZapIcon, title: "Fast Confirmation", desc: "Get a response within 24 hours" },
                                 ].map(({ icon: Icon, title, desc }) => (
                                     <div key={title} className="flex items-start gap-3">
                                         <div className="flex-shrink-0 p-2 rounded-xl bg-[#92a417]/8 text-[#92a417]">

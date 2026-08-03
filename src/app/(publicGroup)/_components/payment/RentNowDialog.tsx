@@ -74,7 +74,7 @@ export function RentNowDialog({ gearId, gearTitle, dailyRate, availableQuantity 
                     // Look for the payment URL in the response
                     // It might be at result.url, result.data.url, or result.payment_url
                     const paymentUrl = result.url || result.payment_url || result.data?.url || result.data?.payment_url || (typeof result.data === 'string' ? result.data : null);
-                    
+
                     if (typeof paymentUrl === "string" && paymentUrl.startsWith("http")) {
                         // ✅ rentalOrderId is already saved to a cookie by handlePayment (server-side)
                         // sessionStorage would be lost after Stripe redirects back, so we rely on the cookie
