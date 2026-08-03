@@ -31,7 +31,6 @@ export const getGear = async ({ query }: { query?: { [key: string]: string | str
             ...(query?.searchTerm
                 ? { cache: "no-store" }
                 : {
-                    cache: "no-store",
                     next: {
                         revalidate: 60 * 60 * 6,
                         tags: ["premium-posts"]
